@@ -92,14 +92,17 @@ def criar_regras_comissao_fixa():
                 ],
                 'razoes': [
                     'COMERCIO DE CARNES E ROTISSERIE DUTRA LT',
-                    'SUPERMERCADO HIGAS ITAQUERA LTDA'
+                    'SUPERMERCADO HIGAS ITAQUERA LTDA', 'DISTRIBUIDORA E COMERCIO UAI SP LTDA',
+                    "GARFETO'S FORNECIMENTO DE REFEICOES LTDA", "LATICINIO SOBERANO LTDA VILA ALPINA",
+                    "SAO LORENZO ALIMENTOS LTDA"
                 ]
             },
             '3%': {
                 'grupos': ['CALVO', 'CENCOSUD', 'CHAMA', 'ESTRELA AZUL', 'TENDA']
             },
             '1%': {
-                'grupos': ['ROLDAO']
+                'grupos': ['ROLDAO'],
+                'razoes': ['SHOPPING FARTURA VALINHOS COMERCIO LTDA']
             }
         },
         'grupos_especificos': {
@@ -118,6 +121,26 @@ def criar_regras_comissao_fixa():
                 '0%': {
                     'grupos_produto': ['EMBUTIDOS', 'SALAME UAI']
                 }
+            },
+            'MUSSA': {
+                '2%': {
+                    'grupos_produto': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+                },
+            },
+            'FRIGOSHOW': {
+                '2%': {
+                    'grupos_produto': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+                },
+            },
+            'CLAYTON': {
+                '2%': {
+                    'grupos_produto': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+                },
+            },
+            'ROD E RAF': {
+                '2%': {
+                    'grupos_produto': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+                },
             },
             'REDE PLUS': {
                 '3%': {
