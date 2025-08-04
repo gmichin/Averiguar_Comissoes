@@ -105,6 +105,56 @@ def criar_regras_comissao_fixa():
                 'razoes': ['SHOPPING FARTURA VALINHOS COMERCIO LTDA']
             }
         },
+        'razoes_especificas': { 
+            'ACOUGUE E ROTISSERIE E GRIL BEEF LTDA': {
+                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+            },
+            'COMERCIO DAN DOG DE ALIMENTOS E LANCHES': {
+                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+            },
+            'LATICIO SOBERANO LTDA.': {
+                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+            },
+            'LINO ASTROLINO JUNIOR': {
+                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+            },
+            'M.F RODRIGUES JUNIOR ACOUGUE': {
+                '2%': ['MIUDOS BOVINOS', 'CORTES BOVINOS']  # SEM CORTES SUINOS
+            },
+            'MARIA DE LOURDES ALBUQUERQUE MINIMERCADO': {
+                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+            },
+            'MERCADO SHOPAN E PADARIA LTDA': {
+                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+            },
+            'NASCIMENTO E SILVA COMERCIO DE PRODUTOS': {
+                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+            },
+            'PADARIA E CONFEITARIA ENCANTO DOS PAES L': {
+                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+            },
+            'PADARIA MAO NA MASSA LTDA': {
+                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+            },
+            'PAES E DOCES COMENDADOR LTDA': {
+                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+            },
+            'PAES E DOCES LEKA LTDA': {
+                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+            },
+            'PAES E DOCES MICHELLI LTDA': {
+                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+            },
+            'PRODUTORA DE CHARQUE SERTAO LTDA': {
+                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+            },
+            'REI DO BIFE CASA DE CARNES ACOUGUE LTDA': {
+                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+            },
+            'STYLLUS GRILL COMERCIO DE CARNES LTDA': {
+                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+            }
+        },
         'grupos_especificos': {
             'STYLLUS': {
                 '0%': {
@@ -193,6 +243,14 @@ def aplicar_regras_comissao_fixa(row, regras):
     grupo_produto = str(row['GRUPO PRODUTO']).strip().upper()
     is_devolucao = str(row['CF']).startswith('DEV')
     
+
+    # --- NOVO BLOCO PARA RAZÕES ESPECÍFICAS ---
+    if 'razoes_especificas' in regras:
+        if razao in regras['razoes_especificas']:
+            grupos_permitidos = regras['razoes_especificas'][razao]['2%']
+            if grupo_produto in grupos_permitidos:
+                return _ajustar_para_devolucao(2, is_devolucao)
+            
     # 1. Verificar regras específicas
     if grupo == 'ROSSI':
         if grupo_produto in ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'SALGADOS SUINOS A GRANEL']:
