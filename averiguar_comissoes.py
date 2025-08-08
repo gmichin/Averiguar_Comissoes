@@ -127,7 +127,7 @@ def criar_regras_comissao_fixa():
                 '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
             },
             'M.F RODRIGUES JUNIOR ACOUGUE': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES BOVINOS']
+                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
             },
             'MARIA DE LOURDES ALBUQUERQUE MINIMERCADO': {
                 '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
