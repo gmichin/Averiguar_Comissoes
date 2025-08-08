@@ -107,11 +107,17 @@ def criar_regras_comissao_fixa():
                 'razoes': ['SHOPPING FARTURA VALINHOS COMERCIO LTDA']
             }
         },
-        'razoes_especificas': { 
+        'razoes_especificas': {
             'ACOUGUE E ROTISSERIE E GRIL BEEF LTDA': {
                 '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
             },
+            'CARLOS MARCIANO LOPES RESTAURANTE': {
+                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+            },
             'COMERCIO DAN DOG DE ALIMENTOS E LANCHES': {
+                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+            },
+            'LANCHONETE BUDEGA LTDA': {
                 '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
             },
             'LATICIO SOBERANO LTDA.': {
@@ -121,7 +127,7 @@ def criar_regras_comissao_fixa():
                 '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
             },
             'M.F RODRIGUES JUNIOR ACOUGUE': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES BOVINOS']  # SEM CORTES SUINOS
+                '2%': ['MIUDOS BOVINOS', 'CORTES BOVINOS']
             },
             'MARIA DE LOURDES ALBUQUERQUE MINIMERCADO': {
                 '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
@@ -142,7 +148,8 @@ def criar_regras_comissao_fixa():
                 '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
             },
             'PAES E DOCES LEKA LTDA': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS'],
+                '3%_codigos': [1893, 1886]  # Adicionando os códigos específicos com 3%
             },
             'PAES E DOCES MICHELLI LTDA': {
                 '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
@@ -155,6 +162,9 @@ def criar_regras_comissao_fixa():
             },
             'STYLLUS GRILL COMERCIO DE CARNES LTDA': {
                 '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
+            },
+            'WANDERLEY GOMES MORENO': {
+                '3%_codigos': [1893, 1886]  # Adicionando a nova razão com códigos específicos
             }
         },
         'grupos_especificos': {
@@ -245,14 +255,22 @@ def aplicar_regras_comissao_fixa(row, regras):
     grupo_produto = str(row['GRUPO PRODUTO']).strip().upper()
     is_devolucao = str(row['CF']).startswith('DEV')
     
-
-    # --- NOVO BLOCO PARA RAZÕES ESPECÍFICAS ---
+    # --- BLOCO PARA RAZÕES ESPECÍFICAS ---
     if 'razoes_especificas' in regras:
         if razao in regras['razoes_especificas']:
-            grupos_permitidos = regras['razoes_especificas'][razao]['2%']
-            if grupo_produto in grupos_permitidos:
-                return _ajustar_para_devolucao(2, is_devolucao)
+            regras_razao = regras['razoes_especificas'][razao]
             
+            # Primeiro verifica regras por código de produto (terminando com _codigos)
+            for chave, valores in regras_razao.items():
+                if chave.endswith('_codigos') and codproduto in valores:
+                    porcentagem = int(chave.split('_')[0].replace('%', ''))
+                    return _ajustar_para_devolucao(porcentagem, is_devolucao)
+            
+            # Depois verifica regras por grupo de produto
+            for chave, valores in regras_razao.items():
+                if not chave.endswith('_codigos') and grupo_produto in valores:
+                    porcentagem = int(chave.replace('%', ''))
+                    return _ajustar_para_devolucao(porcentagem, is_devolucao)
     # 1. Verificar regras específicas
     if grupo == 'ROSSI':
         if grupo_produto in ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'SALGADOS SUINOS A GRANEL']:
@@ -316,7 +334,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\Margem_250807 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\Margem_250807 - correcoes comissoes.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
