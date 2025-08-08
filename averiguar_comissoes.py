@@ -77,7 +77,8 @@ def criar_regras_comissao_kg():
             'razao_codigos': {
                 'SUPERMERCADO REMIX EMPORIO JAVRI LTDA': [812],
                 'HORTIFRUTI CHACARA FLORA LTDA': [812],
-                'JC MIXMERC LTDA': [812]
+                'JC MIXMERC LTDA': [812],
+                'SUPERMERCADO EMPORIO MIX LTDA': [812]
             }
         }
     }
@@ -315,7 +316,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\Margem_250806 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\Margem_250807 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
