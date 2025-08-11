@@ -138,6 +138,16 @@ def criar_regras_comissao_fixa():
                     'todos_exceto': ['SALAME UAI']  # Todos exceto SALAME UAI
                 }
             }
+        },'razoes_especificas': {
+            'PAES E DOCES LEKA LTDA': {
+                '3%_codigos': [1893, 1886]  # Adicionando os códigos específicos com 3%
+            },
+            'PAES E DOCES MICHELLI LTDA': {
+                '3%_codigos': [1893, 1886]  # Adicionando os códigos específicos com 3%
+            },
+            'WANDERLEY GOMES MORENO': {
+                '3%_codigos': [1893, 1886]  # Adicionando a nova razão com códigos específicos
+            }
         },
         'vendedores_especificos': {
             'ELISANGELA CRUZ DOS SANTOS OLIVEIRA': {
@@ -291,7 +301,6 @@ def aplicar_regras_comissao_fixa(row, regras):
     return None
 
 def _ajustar_para_devolucao(valor, is_devolucao):
-    """Ajusta o valor da comissão para devoluções"""
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
@@ -368,6 +377,7 @@ def processar_planilhas():
                 data = pd.to_datetime(row['DATA']).date()
                 preco = float(row['Preço_Venda'])
                 is_devolucao = str(row['CF']).startswith('DEV')
+                grupo = str(row['GRUPO']).strip().upper()
         
                 # Verificar se existe oferta para este código
                 if cod not in ofertas_por_codigo.groups:
@@ -381,8 +391,14 @@ def processar_planilhas():
                 if oferta is not None:
                     preco_oferta = float(oferta['3%'])
                     
+                    # NOVA LÓGICA: Verificar se é STYLLUS ou ROD E RAF para aplicar o desconto de 5%
+                    if grupo in ['STYLLUS', 'ROD E RAF']:
+                        preco_comparacao = preco * 0.95  # Preço - 5%
+                    else:
+                        preco_comparacao = preco  # Mantém o preço normal
+                    
                     # Nova lógica de classificação:
-                    if preco >= preco_oferta:
+                    if preco_comparacao >= preco_oferta:
                         comissao = 3
                     else:
                         comissao = 1
@@ -390,14 +406,18 @@ def processar_planilhas():
                     if is_devolucao:
                         comissao *= -1
         
+                    # Adicionar o preço -5% apenas para os grupos especiais
+                    preco_menos_5 = preco * 0.95 if grupo in ['STYLLUS', 'ROD E RAF'] else None
+                    
                     resultados_ofertas.append({
                         **row.to_dict(),
                         'Preço_Oferta': preco_oferta,
+                        'Preço_menos_5%': preco_menos_5,
                         'Data_Oferta': oferta['Data'],
                         'Comissão_Correta': comissao,
                         'Status': 'Correto' if row['P. Com'] == comissao else 'Incorreto',
                         'Tipo': 'Exata' if oferta['Data'] == data else 'Data Proxima',
-                        'Diferença_Preço': f"{(preco - preco_oferta)/preco_oferta:.2%}"
+                        'Diferença_Preço': f"{(preco_comparacao - preco_oferta)/preco_oferta:.2%}" if preco_oferta != 0 else 'Div/Zero'
                     })
                 else:
                     registros_sem_oferta.append(row.to_dict())
@@ -468,7 +488,7 @@ def processar_planilhas():
                     
                     # Reordenar colunas e renomear
                     colunas_ordenadas = ['CF', 'RAZAO', 'GRUPO', 'NF-E', 'VENDEDOR', 'CODPRODUTO',
-                                       'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'DATA',
+                                       'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'Preço_menos_5%', 'DATA',
                                        'P. Com', 'Preço_Oferta', 'Data_Oferta', 'Comissão_Correta']
                     df_ofertas_corretas = df_ofertas_corretas[colunas_ordenadas].rename(
                         columns={'Comissão_Correta': 'O Com'})
@@ -487,7 +507,7 @@ def processar_planilhas():
                     
                     # Reordenar colunas e renomear
                     colunas_ordenadas = ['CF', 'RAZAO', 'GRUPO', 'NF-E', 'VENDEDOR', 'CODPRODUTO',
-                                       'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'DATA',
+                                       'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'Preço_menos_5%', 'DATA',
                                        'P. Com', 'Preço_Oferta', 'Data_Oferta', 'Comissão_Correta']
                     df_ofertas_incorretas = df_ofertas_incorretas[colunas_ordenadas].rename(
                         columns={'Comissão_Correta': 'O Com'})
