@@ -111,6 +111,9 @@ def criar_regras_comissao_fixa():
             'STYLLUS': {
                 '0%': {
                     'grupos_produto': ['TORRESMO', 'SALAME UAI', 'EMPANADOS']
+                },
+                '3%':{
+                    'grupos_produto': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS']
                 }
             },
             'ROSSI': {
