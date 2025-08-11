@@ -94,77 +94,17 @@ def criar_regras_comissao_fixa():
                 ],
                 'razoes': [
                     'COMERCIO DE CARNES E ROTISSERIE DUTRA LT',
-                    'SUPERMERCADO HIGAS ITAQUERA LTDA', 'DISTRIBUIDORA E COMERCIO UAI SP LTDA',
+                    'DISTRIBUIDORA E COMERCIO UAI SP LTDA',
                     "GARFETO'S FORNECIMENTO DE REFEICOES LTDA", "LATICINIO SOBERANO LTDA VILA ALPINA",
                     "SAO LORENZO ALIMENTOS LTDA"
                 ]
             },
             '3%': {
-                'grupos': ['CALVO', 'CENCOSUD', 'CHAMA', 'ESTRELA AZUL', 'TENDA']
+                'grupos': ['CALVO', 'CHAMA', 'ESTRELA AZUL', 'TENDA', 'HIGAS'],
             },
             '1%': {
                 'grupos': ['ROLDAO'],
                 'razoes': ['SHOPPING FARTURA VALINHOS COMERCIO LTDA']
-            }
-        },
-        'razoes_especificas': {
-            'ACOUGUE E ROTISSERIE E GRIL BEEF LTDA': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-            },
-            'CARLOS MARCIANO LOPES RESTAURANTE': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-            },
-            'COMERCIO DAN DOG DE ALIMENTOS E LANCHES': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-            },
-            'LANCHONETE BUDEGA LTDA': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-            },
-            'LATICIO SOBERANO LTDA.': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-            },
-            'LINO ASTROLINO JUNIOR': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-            },
-            'M.F RODRIGUES JUNIOR ACOUGUE': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-            },
-            'MARIA DE LOURDES ALBUQUERQUE MINIMERCADO': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-            },
-            'MERCADO SHOPAN E PADARIA LTDA': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-            },
-            'NASCIMENTO E SILVA COMERCIO DE PRODUTOS': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-            },
-            'PADARIA E CONFEITARIA ENCANTO DOS PAES L': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-            },
-            'PADARIA MAO NA MASSA LTDA': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-            },
-            'PAES E DOCES COMENDADOR LTDA': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-            },
-            'PAES E DOCES LEKA LTDA': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS'],
-                '3%_codigos': [1893, 1886]  # Adicionando os códigos específicos com 3%
-            },
-            'PAES E DOCES MICHELLI LTDA': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-            },
-            'PRODUTORA DE CHARQUE SERTAO LTDA': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-            },
-            'REI DO BIFE CASA DE CARNES ACOUGUE LTDA': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-            },
-            'STYLLUS GRILL COMERCIO DE CARNES LTDA': {
-                '2%': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-            },
-            'WANDERLEY GOMES MORENO': {
-                '3%_codigos': [1893, 1886]  # Adicionando a nova razão com códigos específicos
             }
         },
         'grupos_especificos': {
@@ -184,30 +124,35 @@ def criar_regras_comissao_fixa():
                     'grupos_produto': ['EMBUTIDOS', 'SALAME UAI']
                 }
             },
-            'MUSSA': {
-                '2%': {
-                    'grupos_produto': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-                },
-            },
-            'FRIGOSHOW': {
-                '2%': {
-                    'grupos_produto': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-                },
-            },
-            'CLAYTON': {
-                '2%': {
-                    'grupos_produto': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-                },
-            },
-            'ROD E RAF': {
-                '2%': {
-                    'grupos_produto': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']
-                },
-            },
             'REDE PLUS': {
                 '3%': {
                     'grupos_produto': ['CORTES SUINOS CONGELADOS', 'CORTES BOVINOS'],
                     'codigos': [812]
+                }
+            },
+            'CENCOSUD': {  # Regra específica para CENCOSUD
+                '1%': {
+                    'grupos_produto': ['SALAME UAI']
+                },
+                '3%': {
+                    'todos_exceto': ['SALAME UAI']  # Todos exceto SALAME UAI
+                }
+            }
+        },
+        'vendedores_especificos': {
+            'ELISANGELA CRUZ DOS SANTOS OLIVEIRA': {
+                '2%': {
+                    'grupos_produto': ['CORTES BOVINOS']
+                }
+            },
+            'HERMELINA MARIA COSTA': {
+                '2%': {
+                    'grupos_produto': ['CORTES BOVINOS']
+                }
+            },
+            'SIDILENE PASSOS DE FREITAS': {
+                '2%': {
+                    'grupos_produto': ['CORTES BOVINOS']
                 }
             }
         }
@@ -249,11 +194,27 @@ def pertence_comissao_kg(row, regras):
 
 def aplicar_regras_comissao_fixa(row, regras):
     """Aplica as regras de comissão fixa de forma dinâmica"""
+    vendedor = str(row['VENDEDOR']).strip().upper()
     grupo = str(row['GRUPO']).strip().upper()
     razao = str(row['RAZAO']).strip().upper()
     codproduto = row['CODPRODUTO']
     grupo_produto = str(row['GRUPO PRODUTO']).strip().upper()
     is_devolucao = str(row['CF']).startswith('DEV')
+    
+    # --- NOVO BLOCO: VERIFICAÇÃO POR VENDEDOR ESPECÍFICO ---
+    if 'vendedores_especificos' in regras:
+        if vendedor in regras['vendedores_especificos']:
+            regras_vendedor = regras['vendedores_especificos'][vendedor]
+            
+            for porcentagem, condicoes in regras_vendedor.items():
+                if 'grupos_produto' in condicoes:
+                    if grupo_produto in condicoes['grupos_produto']:
+                        return _ajustar_para_devolucao(int(porcentagem.replace('%', '')), is_devolucao)
+    
+    if 'CENCOSUD' in grupo:  # Verifica se contém "CENCOSUD" (case insensitive)
+        if 'SALAME UAI' in grupo_produto:
+            return _ajustar_para_devolucao(1, is_devolucao)
+        return _ajustar_para_devolucao(3, is_devolucao)
     
     # --- BLOCO PARA RAZÕES ESPECÍFICAS ---
     if 'razoes_especificas' in regras:
@@ -334,7 +295,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\Margem_250807 - correcoes comissoes.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\Margem_250808 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
@@ -360,7 +321,7 @@ def processar_planilhas():
         df_ofertas['Data'] = pd.to_datetime(df_ofertas['Data']).dt.date
         df_ofertas['COD'] = pd.to_numeric(df_ofertas['COD'], errors='coerce').fillna(0).astype('int64')
         df_ofertas['3%'] = pd.to_numeric(df_ofertas['3%'], errors='coerce')
-        print(f"- Total de ofertas cadastradas: {len(df_ofertas)}")
+        print(f"- Total de OFERTAS_VOG cadastradas: {len(df_ofertas)}")
         
          # 2. Aplicar regras de comissão por kg (primeiro filtro)
         regras_comissao_kg = criar_regras_comissao_kg()
