@@ -304,7 +304,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\Margem_250808 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\OneDrive\Documentos\Margens de fechamento\Margem_250731 - Fechamento V2 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
@@ -412,7 +412,7 @@ def processar_planilhas():
                     resultados_ofertas.append({
                         **row.to_dict(),
                         'Preço_Oferta': preco_oferta,
-                        'Preço_menos_5%': preco_menos_5,
+                        'Preço - 5%': preco_menos_5,
                         'Data_Oferta': oferta['Data'],
                         'Comissão_Correta': comissao,
                         'Status': 'Correto' if row['P. Com'] == comissao else 'Incorreto',
@@ -488,7 +488,7 @@ def processar_planilhas():
                     
                     # Reordenar colunas e renomear
                     colunas_ordenadas = ['CF', 'RAZAO', 'GRUPO', 'NF-E', 'VENDEDOR', 'CODPRODUTO',
-                                       'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'Preço_menos_5%', 'DATA',
+                                       'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'Preço - 5%', 'DATA',
                                        'P. Com', 'Preço_Oferta', 'Data_Oferta', 'Comissão_Correta']
                     df_ofertas_corretas = df_ofertas_corretas[colunas_ordenadas].rename(
                         columns={'Comissão_Correta': 'O Com'})
@@ -507,7 +507,7 @@ def processar_planilhas():
                     
                     # Reordenar colunas e renomear
                     colunas_ordenadas = ['CF', 'RAZAO', 'GRUPO', 'NF-E', 'VENDEDOR', 'CODPRODUTO',
-                                       'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'Preço_menos_5%', 'DATA',
+                                       'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'Preço - 5%', 'DATA',
                                        'P. Com', 'Preço_Oferta', 'Data_Oferta', 'Comissão_Correta']
                     df_ofertas_incorretas = df_ofertas_incorretas[colunas_ordenadas].rename(
                         columns={'Comissão_Correta': 'O Com'})
