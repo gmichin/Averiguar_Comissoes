@@ -114,14 +114,14 @@ def criar_regras_comissao_fixa():
                     'grupos_produto': ['TORRESMO', 'SALAME UAI', 'EMPANADOS']
                 },
                 '3%':{
-                    'grupos_produto': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS']
+                    'grupos_produto': ['MIUDOS BOVINOS', 'SUINOS']
                 }
             },
             'ROSSI': {
                 '3%': [1288, 1289, 1287, 937, 1698, 1701, 1587, 1700, 1586, 1699],
                 '1%': [1265, 1266, 812, 1115, 798],
                 '2%': {
-                    'grupos_produto': ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'SALGADOS SUINOS A GRANEL'],
+                    'grupos_produto': ['MIUDOS BOVINOS', 'SUINOS', 'SALGADOS SUINOS A GRANEL'],
                     'codigos': [700]
                 },
                 '0%': {
@@ -130,7 +130,7 @@ def criar_regras_comissao_fixa():
             },
             'REDE PLUS': {
                 '3%': {
-                    'grupos_produto': ['CORTES SUINOS CONGELADOS', 'CORTES BOVINOS'],
+                    'grupos_produto': ['SUINOS', 'CORTES BOVINOS'],
                     'codigos': [812]
                 }
             },
@@ -308,7 +308,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\Margem_250814 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\Margem_250815 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
