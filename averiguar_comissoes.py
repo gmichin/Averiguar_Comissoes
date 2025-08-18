@@ -125,7 +125,9 @@ def criar_regras_comissao_fixa():
                     'codigos': [700]
                 },
                 '0%': {
-                    'grupos_produto': ['EMBUTIDOS', 'SALAME UAI']
+                    'grupos_produto': ['EMBUTIDOS', 'EMBUTIDOS NOBRE', 'EMBUTIDOS SADIA', 
+                                       'EMBUTIDOS PERDIGAO', 'EMBUTIDOS AURORA', 'EMBUTIDOS SEARA', 
+                                       'SALAME UAI']
                 }
             },
             'REDE PLUS': {
@@ -134,23 +136,23 @@ def criar_regras_comissao_fixa():
                     'codigos': [812]
                 }
             },
-            'CENCOSUD': {  # Regra específica para CENCOSUD
+            'CENCOSUD': {
                 '1%': {
                     'grupos_produto': ['SALAME UAI']
                 },
                 '3%': {
-                    'todos_exceto': ['SALAME UAI']  # Todos exceto SALAME UAI
+                    'todos_exceto': ['SALAME UAI']
                 }
             }
         },'razoes_especificas': {
             'PAES E DOCES LEKA LTDA': {
-                '3%_codigos': [1893, 1886]  # Adicionando os códigos específicos com 3%
+                '3%_codigos': [1893, 1886]
             },
             'PAES E DOCES MICHELLI LTDA': {
-                '3%_codigos': [1893, 1886]  # Adicionando os códigos específicos com 3%
+                '3%_codigos': [1893, 1886]
             },
             'WANDERLEY GOMES MORENO': {
-                '3%_codigos': [1893, 1886]  # Adicionando a nova razão com códigos específicos
+                '3%_codigos': [1893, 1886]
             }
         },
         'vendedores_especificos': {
