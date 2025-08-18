@@ -248,14 +248,14 @@ def aplicar_regras_comissao_fixa(row, regras):
                     return _ajustar_para_devolucao(porcentagem, is_devolucao)
     # 1. Verificar regras específicas
     if grupo == 'ROSSI':
-        if grupo_produto in ['MIUDOS BOVINOS', 'CORTES SUINOS CONGELADOS', 'SALGADOS SUINOS A GRANEL']:
+        if grupo_produto in ['MIUDOS BOVINOS', 'SUINOS', 'SALGADOS SUINOS A GRANEL']:
             return _ajustar_para_devolucao(2, is_devolucao)
         
         if codproduto == 700:
             return _ajustar_para_devolucao(2, is_devolucao)
         
     if grupo == 'REDE PLUS':
-        if grupo_produto in ['CORTES SUINOS CONGELADOS', 'CORTES BOVINOS']:
+        if grupo_produto in ['SUINOS', 'CORTES BOVINOS']:
             return _ajustar_para_devolucao(3, is_devolucao)
         
         if codproduto == 812:
