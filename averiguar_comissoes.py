@@ -112,27 +112,25 @@ def criar_regras_comissao_fixa():
             'STYLLUS': {
                 '0%': {
                     'grupos_produto': ['TORRESMO', 'SALAME UAI', 'EMPANADOS']
-                },
-                '3%':{
-                    'grupos_produto': ['MIUDOS BOVINOS', 'SUINOS']
                 }
             },
             'ROSSI': {
                 '3%': [1288, 1289, 1287, 937, 1698, 1701, 1587, 1700, 1586, 1699],
                 '1%': [1265, 1266, 812, 1115, 798],
-                '2%': {
-                    'grupos_produto': ['MIUDOS BOVINOS', 'SUINOS', 'SALGADOS SUINOS A GRANEL'],
-                    'codigos': [700]
-                },
                 '0%': {
                     'grupos_produto': ['EMBUTIDOS', 'EMBUTIDOS NOBRE', 'EMBUTIDOS SADIA', 
                                        'EMBUTIDOS PERDIGAO', 'EMBUTIDOS AURORA', 'EMBUTIDOS SEARA', 
-                                       'SALAME UAI']
+                                       'SALAME UAI'],
+                    'codigos': [1139]
+                },
+                '2%': {
+                    'grupos_produto': ['MIUDOS BOVINOS', 'SUINOS', 'SALGADOS SUINOS A GRANEL'],
+                    'codigos': [700]
                 }
             },
             'REDE PLUS': {
                 '3%': {
-                    'grupos_produto': ['SUINOS', 'CORTES BOVINOS'],
+                    'grupos_produto': ['TEMPERADOS'],
                     'codigos': [812]
                 }
             },
@@ -141,7 +139,7 @@ def criar_regras_comissao_fixa():
                     'grupos_produto': ['SALAME UAI']
                 },
                 '3%': {
-                    'todos_exceto': ['SALAME UAI']
+                    'todos_exceto': ['SALGADOS SUINOS EMBALADOS']
                 }
             }
         },'razoes_especificas': {
@@ -227,7 +225,7 @@ def aplicar_regras_comissao_fixa(row, regras):
                     if grupo_produto in condicoes['grupos_produto']:
                         return _ajustar_para_devolucao(int(porcentagem.replace('%', '')), is_devolucao)
     
-    if 'CENCOSUD' in grupo:  # Verifica se contém "CENCOSUD" (case insensitive)
+    if 'CENCOSUD' in grupo:
         if 'SALAME UAI' in grupo_produto:
             return _ajustar_para_devolucao(1, is_devolucao)
         return _ajustar_para_devolucao(3, is_devolucao)
@@ -237,69 +235,83 @@ def aplicar_regras_comissao_fixa(row, regras):
         if razao in regras['razoes_especificas']:
             regras_razao = regras['razoes_especificas'][razao]
             
-            # Primeiro verifica regras por código de produto (terminando com _codigos)
             for chave, valores in regras_razao.items():
                 if chave.endswith('_codigos') and codproduto in valores:
                     porcentagem = int(chave.split('_')[0].replace('%', ''))
                     return _ajustar_para_devolucao(porcentagem, is_devolucao)
             
-            # Depois verifica regras por grupo de produto
             for chave, valores in regras_razao.items():
                 if not chave.endswith('_codigos') and grupo_produto in valores:
                     porcentagem = int(chave.replace('%', ''))
                     return _ajustar_para_devolucao(porcentagem, is_devolucao)
-    # 1. Verificar regras específicas
+    
+    # --- REGRAS ESPECÍFICAS POR GRUPO (COM ORDEM DE PRIORIDADE) ---
     if grupo == 'ROSSI':
+        # PRIMEIRO verifica a regra de 0% (mais específica)
+        if codproduto == 1139:
+            return _ajustar_para_devolucao(0, is_devolucao)
+        
+        if grupo_produto in ['EMBUTIDOS', 'EMBUTIDOS NOBRE', 'EMBUTIDOS SADIA', 
+                           'EMBUTIDOS PERDIGAO', 'EMBUTIDOS AURORA', 'EMBUTIDOS SEARA', 
+                           'SALAME UAI']:
+            return _ajustar_para_devolucao(0, is_devolucao)
+        
+        # DEPOIS verifica a regra de 2%
         if grupo_produto in ['MIUDOS BOVINOS', 'SUINOS', 'SALGADOS SUINOS A GRANEL']:
             return _ajustar_para_devolucao(2, is_devolucao)
         
         if codproduto == 700:
             return _ajustar_para_devolucao(2, is_devolucao)
         
+        # FINALMENTE verifica as listas de códigos
+        if codproduto in [1288, 1289, 1287, 937, 1698, 1701, 1587, 1700, 1586, 1699]:
+            return _ajustar_para_devolucao(3, is_devolucao)
+        
+        if codproduto in [1265, 1266, 812, 1115, 798]:
+            return _ajustar_para_devolucao(1, is_devolucao)
+    
     if grupo == 'REDE PLUS':
-        if grupo_produto in ['SUINOS', 'CORTES BOVINOS']:
+        if grupo_produto in ['TEMPERADOS']:
             return _ajustar_para_devolucao(3, is_devolucao)
         
         if codproduto == 812:
             return _ajustar_para_devolucao(3, is_devolucao)
-        
-    # 2. Verifica outras regras específicas por grupo
+    
+    # 2. Verifica outras regras específicas por grupo (mantendo a estrutura original)
     if grupo in regras['grupos_especificos']:
         regras_grupo = regras['grupos_especificos'][grupo]
         
-        for porcentagem, condicoes in regras_grupo.items():
-            # Se for lista simples de códigos
-            if isinstance(condicoes, list):
-                if codproduto in condicoes:
-                    return _ajustar_para_devolucao(int(porcentagem.replace('%', '')), is_devolucao)
-            
-            # Se for dicionário com condições complexas
-            elif isinstance(condicoes, dict):
-                match = True
+        # Verificar primeiro as regras mais específicas (0%, depois 2%, etc.)
+        for porcentagem in ['0%', '2%', '1%', '3%']:  # Ordem de prioridade
+            if porcentagem in regras_grupo:
+                condicoes = regras_grupo[porcentagem]
                 
-                # Verifica grupos de produto
-                if 'grupos_produto' in condicoes:
-                    if grupo_produto not in condicoes['grupos_produto']:
-                        match = False
+                if isinstance(condicoes, list):
+                    if codproduto in condicoes:
+                        return _ajustar_para_devolucao(int(porcentagem.replace('%', '')), is_devolucao)
                 
-                # Verifica códigos específicos
-                if 'codigos' in condicoes and match:
-                    if codproduto not in condicoes['codigos']:
-                        match = False
-                
-                if match:
-                    return _ajustar_para_devolucao(int(porcentagem.replace('%', '')), is_devolucao)
+                elif isinstance(condicoes, dict):
+                    match = True
+                    
+                    if 'grupos_produto' in condicoes:
+                        if grupo_produto not in condicoes['grupos_produto']:
+                            match = False
+                    
+                    if 'codigos' in condicoes and match:
+                        if codproduto not in condicoes['codigos']:
+                            match = False
+                    
+                    if match:
+                        return _ajustar_para_devolucao(int(porcentagem.replace('%', '')), is_devolucao)
     
     # 3. Verifica regras gerais
     for porcentagem, condicoes in regras['geral'].items():
         porcentagem_num = int(porcentagem.replace('%', ''))
         
-        # Verifica por grupo
         if 'grupos' in condicoes:
             if grupo in condicoes['grupos']:
                 return _ajustar_para_devolucao(porcentagem_num, is_devolucao)
         
-        # Verifica por razão social
         if 'razoes' in condicoes:
             if razao in condicoes['razoes']:
                 return _ajustar_para_devolucao(porcentagem_num, is_devolucao)
@@ -310,7 +322,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\Margem_250815 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\Margem_250818 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
