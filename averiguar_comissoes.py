@@ -79,7 +79,8 @@ def criar_regras_comissao_kg():
                 'SUPERMERCADO REMIX EMPORIO JAVRI LTDA': [812],
                 'HORTIFRUTI CHACARA FLORA LTDA': [812],
                 'JC MIXMERC LTDA': [812],
-                'SUPERMERCADO EMPORIO MIX LTDA': [812]
+                'SUPERMERCADO EMPORIO MIX LTDA': [812],
+                'SUPERMERCADO DOM PETROPOLIS LTDA': [812]
             }
         }
     }
@@ -213,9 +214,24 @@ def aplicar_regras_comissao_fixa(row, regras):
     razao = str(row['RAZAO']).strip().upper()
     codproduto = row['CODPRODUTO']
     grupo_produto = str(row['GRUPO PRODUTO']).strip().upper()
+    nfe = str(row['NF-E']).strip()
     is_devolucao = str(row['CF']).startswith('DEV')
     
-    # --- NOVO BLOCO: VERIFICAÇÃO POR VENDEDOR ESPECÍFICO ---
+    # --- NOVA REGRA: POR NF-E E PRODUTO ---
+    # NF-E 105790 o produto 1659 seria 0%
+    if nfe == '105790' and codproduto == 1659:
+        return _ajustar_para_devolucao(0, is_devolucao)
+    
+    # NF-E 105294 o produto 1750 seria 1%
+    if nfe == '105294' and codproduto == 1750:
+        return _ajustar_para_devolucao(1, is_devolucao)
+    
+    # --- NOVA REGRA: POR PRODUTO ---
+    # Todos os produtos de código 1807 vai ser 1%
+    if codproduto == 1807:
+        return _ajustar_para_devolucao(1, is_devolucao)
+    
+    # --- VERIFICAÇÃO POR VENDEDOR ESPECÍFICO ---
     if 'vendedores_especificos' in regras:
         if vendedor in regras['vendedores_especificos']:
             regras_vendedor = regras['vendedores_especificos'][vendedor]
@@ -224,7 +240,6 @@ def aplicar_regras_comissao_fixa(row, regras):
                 if 'grupos_produto' in condicoes:
                     if grupo_produto in condicoes['grupos_produto']:
                         return _ajustar_para_devolucao(int(porcentagem.replace('%', '')), is_devolucao)
-    
     if 'CENCOSUD' in grupo:
         if 'SALAME UAI' in grupo_produto:
             return _ajustar_para_devolucao(1, is_devolucao)
@@ -322,7 +337,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\Margem_250818 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\Margem_250821 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
