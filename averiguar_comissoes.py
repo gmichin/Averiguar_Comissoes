@@ -219,11 +219,11 @@ def aplicar_regras_comissao_fixa(row, regras):
     
     # --- NOVA REGRA: POR NF-E E PRODUTO ---
     # NF-E 105790 o produto 1659 seria 0%
-    if nfe == '105790' and codproduto == 1659:
+    if nfe == '105790' and codproduto == 1750:
         return _ajustar_para_devolucao(0, is_devolucao)
     
     # NF-E 105294 o produto 1750 seria 1%
-    if nfe == '105294' and codproduto == 1750:
+    if nfe == '105294' and codproduto == 1659:
         return _ajustar_para_devolucao(1, is_devolucao)
     
     # --- NOVA REGRA: POR PRODUTO ---
