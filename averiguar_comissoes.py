@@ -337,7 +337,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\Margem_250821 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\Margem_250826 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
@@ -357,7 +357,7 @@ def processar_planilhas():
         df_base['P. Com'] = (pd.to_numeric(df_base['P. Com'], errors='coerce') * 100).round().astype('Int64')
         df_base['Preço_Venda'] = pd.to_numeric(df_base['Preço_Venda'], errors='coerce')
         
-        df_ofertas = pd.read_excel(caminho_origem, sheet_name='OFERTAS_VOG')
+        df_ofertas = pd.read_excel(caminho_origem, sheet_name='OFF_VOG')
         df_ofertas = df_ofertas[['COD', 'ITENS', '3%', 'Data']].dropna(subset=['COD', 'Data'])
         
         df_ofertas['Data'] = pd.to_datetime(df_ofertas['Data']).dt.date
