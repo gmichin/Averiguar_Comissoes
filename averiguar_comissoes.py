@@ -99,7 +99,8 @@ def criar_regras_comissao_fixa():
                     'COMERCIO DE CARNES E ROTISSERIE DUTRA LT',
                     'DISTRIBUIDORA E COMERCIO UAI SP LTDA',
                     "GARFETO'S FORNECIMENTO DE REFEICOES LTDA", "LATICINIO SOBERANO LTDA VILA ALPINA",
-                    "SAO LORENZO ALIMENTOS LTDA"
+                    "SAO LORENZO ALIMENTOS LTDA",
+                    "QUE DELICIA MENDES COMERCIO DE ALIMENTOS"
                 ]
             },
             '3%': {
@@ -118,7 +119,7 @@ def criar_regras_comissao_fixa():
             },
             'ROSSI': {
                 '3%': [1288, 1289, 1287, 937, 1698, 1701, 1587, 1700, 1586, 1699],
-                '1%': [1265, 1266, 812, 1115, 798],
+                '1%': [1265, 1266, 812, 1115, 798, 1211],
                 '0%': {
                     'grupos_produto': ['EMBUTIDOS', 'EMBUTIDOS NOBRE', 'EMBUTIDOS SADIA', 
                                        'EMBUTIDOS PERDIGAO', 'EMBUTIDOS AURORA', 'EMBUTIDOS SEARA', 
@@ -338,7 +339,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\Margem_250826 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\Margem_250828 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
