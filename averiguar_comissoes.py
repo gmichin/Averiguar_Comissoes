@@ -144,8 +144,28 @@ def criar_regras_comissao_fixa():
                 '3%': {
                     'todos_exceto': ['SALGADOS SUINOS EMBALADOS']
                 }
+            },
+            # NOVA REGRA PARA ROLDÃO
+            'ROLDAO': {
+                '0%': {
+                    'grupos_produto': [
+                        'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
+                        'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGÃO', 
+                        'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
+                        'KITS FEIJOADDA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
+                    ]
+                },
+                '1%': {
+                    'todos_exceto': [
+                        'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
+                        'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGÃO', 
+                        'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
+                        'KITS FEIJOADDA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
+                    ]
+                }
             }
-        },'razoes_especificas': {
+        },
+        'razoes_especificas': {
             'PAES E DOCES LEKA LTDA': {
                 '3%_codigos': [1893, 1886]
             },
@@ -242,6 +262,16 @@ def aplicar_regras_comissao_fixa(row, regras):
                 if 'grupos_produto' in condicoes:
                     if grupo_produto in condicoes['grupos_produto']:
                         return _ajustar_para_devolucao(int(porcentagem.replace('%', '')), is_devolucao)
+    
+    # --- NOVA REGRA PARA CALVO - deve ser processada por ofertas ---
+    if grupo == 'CALVO':
+        # Se for MIUDOS BOVINOS, CORTES DE FRANGO ou SUINOS, processa por ofertas
+        if grupo_produto in ['MIUDOS BOVINOS', 'CORTES DE FRANGO', 'SUINOS']:
+            return None  # Retorna None para que seja processado por ofertas
+        
+        # Todo o resto do CALVO é 3%
+        return _ajustar_para_devolucao(3, is_devolucao)
+    
     if 'CENCOSUD' in grupo:
         if 'SALAME UAI' in grupo_produto:
             return _ajustar_para_devolucao(1, is_devolucao)
@@ -285,6 +315,20 @@ def aplicar_regras_comissao_fixa(row, regras):
             return _ajustar_para_devolucao(3, is_devolucao)
         
         if codproduto in [1265, 1266, 812, 1115, 798]:
+            return _ajustar_para_devolucao(1, is_devolucao)
+    
+    # --- NOVA REGRA PARA ROLDÃO ---
+    if grupo == 'ROLDAO':
+        grupos_0_percent = [
+            'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
+            'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGÃO', 
+            'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
+            'KITS FEIJOADDA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
+        ]
+        
+        if grupo_produto in grupos_0_percent:
+            return _ajustar_para_devolucao(0, is_devolucao)
+        else:
             return _ajustar_para_devolucao(1, is_devolucao)
     
     if grupo == 'REDE PLUS':
@@ -339,7 +383,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\Margem_250904 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\OneDrive\Documentos\Margens de fechamento\Margem_250831 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
@@ -413,6 +457,7 @@ def processar_planilhas():
                 preco = float(row['Preço_Venda'])
                 is_devolucao = str(row['CF']).startswith('DEV')
                 grupo = str(row['GRUPO']).strip().upper()
+                grupo_produto = str(row['GRUPO PRODUTO']).strip().upper()
         
                 # Verificar se existe oferta para este código
                 if cod not in ofertas_por_codigo.groups:
@@ -426,8 +471,14 @@ def processar_planilhas():
                 if oferta is not None:
                     preco_oferta = float(oferta['3%'])
                     
-                    # NOVA LÓGICA: Verificar se é STYLLUS ou ROD E RAF para aplicar o desconto de 5%
-                    if grupo in ['STYLLUS', 'ROD E RAF']:
+                    # NOVA LÓGICA: Verificar se é STYLLUS, ROD E RAF ou CALVO com grupos específicos para aplicar o desconto de 5%
+                    grupos_especiais = ['STYLLUS', 'ROD E RAF']
+                    
+                    # CALVO só aplica desconto de 5% para grupos específicos
+                    if grupo == 'CALVO' and grupo_produto in ['MIUDOS BOVINOS', 'CORTES DE FRANGO', 'SUINOS']:
+                        grupos_especiais.append('CALVO')
+                    
+                    if grupo in grupos_especiais:
                         preco_comparacao = preco * 0.95  # Preço - 5%
                     else:
                         preco_comparacao = preco  # Mantém o preço normal
@@ -442,7 +493,7 @@ def processar_planilhas():
                         comissao *= -1
         
                     # Adicionar o preço -5% apenas para os grupos especiais
-                    preco_menos_5 = preco * 0.95 if grupo in ['STYLLUS', 'ROD E RAF'] else None
+                    preco_menos_5 = preco * 0.95 if grupo in grupos_especiais else None
                     
                     resultados_ofertas.append({
                         **row.to_dict(),
