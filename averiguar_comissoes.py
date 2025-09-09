@@ -3,7 +3,7 @@ from datetime import datetime
 import os
 import numpy as np
 
-def encontrar_oferta_mais_proxima(df_ofertas, codproduto, data_venda):
+def encontrar_oferta_mais_proxima(df_ofertas, codproduto, data_venda, coluna_comissao='3%'):
     try:
         # Conversão robusta dos dados de entrada
         cod = int(float(codproduto))
@@ -35,8 +35,40 @@ def encontrar_oferta_mais_proxima(df_ofertas, codproduto, data_venda):
         print(f"Erro ao buscar oferta para {codproduto}: {str(e)}")
         return None
 
+def encontrar_oferta_cb_mais_proxima(df_ofertas_cb, codproduto, data_venda):
+    try:
+        # Conversão robusta dos dados de entrada
+        cod = int(float(codproduto))
+        data = pd.to_datetime(data_venda).date()
+        
+        # Filtrar ofertas para o código do produto
+        ofertas_cod = df_ofertas_cb[df_ofertas_cb['CD_PROD'] == cod].copy()
+        
+        if ofertas_cod.empty:
+            return None
+            
+        # Converter datas e ordenar
+        ofertas_cod['DT_REF'] = pd.to_datetime(ofertas_cod['DT_REF']).dt.date
+        ofertas_cod = ofertas_cod.sort_values('DT_REF', ascending=False)
+        
+        # 1. Buscar oferta na data exata
+        oferta_exata = ofertas_cod[ofertas_cod['DT_REF'] == data]
+        if not oferta_exata.empty:
+            return oferta_exata.iloc[0]
+        
+        # 2. Buscar a oferta mais recente anterior
+        ofertas_anteriores = ofertas_cod[ofertas_cod['DT_REF'] < data]
+        if not ofertas_anteriores.empty:
+            return ofertas_anteriores.iloc[0]  # Já está ordenado
+        
+        return None
+        
+    except Exception as e:
+        print(f"Erro ao buscar oferta CB para {codproduto}: {str(e)}")
+        return None
 
 def criar_regras_comissao_kg():
+    # ... (mantido igual ao código original)
     regras = {
         'TODOS': {
             'grupo': ['LOURENCINI'] 
@@ -87,6 +119,7 @@ def criar_regras_comissao_kg():
     return regras
 
 def criar_regras_comissao_fixa():
+    # ... (mantido igual ao código original)
     regras = {
         'geral': {
             '0%': {
@@ -145,7 +178,6 @@ def criar_regras_comissao_fixa():
                     'todos_exceto': ['SALGADOS SUINOS EMBALADOS']
                 }
             },
-            # NOVA REGRA PARA ROLDÃO
             'ROLDAO': {
                 '0%': {
                     'grupos_produto': [
@@ -198,6 +230,7 @@ def criar_regras_comissao_fixa():
 
 def pertence_comissao_kg(row, regras):
     """Verifica se o registro pertence à comissão por kg"""
+    # ... (mantido igual ao código original)
     vendedor = str(row['VENDEDOR']).strip().upper()
     grupo = str(row['GRUPO']).strip().upper()
     razao = str(row['RAZAO']).strip().upper()
@@ -231,6 +264,7 @@ def pertence_comissao_kg(row, regras):
 
 def aplicar_regras_comissao_fixa(row, regras):
     """Aplica as regras de comissão fixa de forma dinâmica"""
+    # ... (mantido igual ao código original)
     vendedor = str(row['VENDEDOR']).strip().upper()
     grupo = str(row['GRUPO']).strip().upper()
     razao = str(row['RAZAO']).strip().upper()
@@ -383,7 +417,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\OneDrive\Documentos\Margens de fechamento\Margem_250831 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\Margem_250908 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
@@ -403,15 +437,22 @@ def processar_planilhas():
         df_base['P. Com'] = (pd.to_numeric(df_base['P. Com'], errors='coerce') * 100).round().astype('Int64')
         df_base['Preço_Venda'] = pd.to_numeric(df_base['Preço_Venda'], errors='coerce')
         
-        df_ofertas = pd.read_excel(caminho_origem, sheet_name='OFF_VOG')
-        df_ofertas = df_ofertas[['COD', 'ITENS', '3%', 'Data']].dropna(subset=['COD', 'Data'])
+        # Ler as duas abas de ofertas
+        df_ofertas_vog = pd.read_excel(caminho_origem, sheet_name='OFF_VOG')
+        df_ofertas_vog = df_ofertas_vog[['COD', 'ITENS', '3%', 'Data']].dropna(subset=['COD', 'Data'])
+        df_ofertas_vog['Data'] = pd.to_datetime(df_ofertas_vog['Data']).dt.date
+        df_ofertas_vog['COD'] = pd.to_numeric(df_ofertas_vog['COD'], errors='coerce').fillna(0).astype('int64')
+        df_ofertas_vog['3%'] = pd.to_numeric(df_ofertas_vog['3%'], errors='coerce')
+        print(f"- Total de OFERTAS_VOG cadastradas: {len(df_ofertas_vog)}")
         
-        df_ofertas['Data'] = pd.to_datetime(df_ofertas['Data']).dt.date
-        df_ofertas['COD'] = pd.to_numeric(df_ofertas['COD'], errors='coerce').fillna(0).astype('int64')
-        df_ofertas['3%'] = pd.to_numeric(df_ofertas['3%'], errors='coerce')
-        print(f"- Total de OFERTAS_VOG cadastradas: {len(df_ofertas)}")
+        df_ofertas_cb = pd.read_excel(caminho_origem, sheet_name='OFF_VOG_CB')
+        df_ofertas_cb = df_ofertas_cb[['CD_PROD', 'GP_PROD', 'DS_PROD', '2%', '1%', 'DT_REF', 'QTDE_VENDAS', 'PK_OFF_CB']].dropna(subset=['CD_PROD', 'DT_REF'])
+        df_ofertas_cb['DT_REF'] = pd.to_datetime(df_ofertas_cb['DT_REF']).dt.date
+        df_ofertas_cb['CD_PROD'] = pd.to_numeric(df_ofertas_cb['CD_PROD'], errors='coerce').fillna(0).astype('int64')
+        df_ofertas_cb['2%'] = pd.to_numeric(df_ofertas_cb['2%'], errors='coerce')
+        print(f"- Total de OFERTAS_CB cadastradas: {len(df_ofertas_cb)}")
         
-         # 2. Aplicar regras de comissão por kg (primeiro filtro)
+        # 2. Aplicar regras de comissão por kg (primeiro filtro)
         regras_comissao_kg = criar_regras_comissao_kg()
         df_base['Comissao_Kg'] = df_base.apply(
             lambda row: pertence_comissao_kg(row, regras_comissao_kg), axis=1)
@@ -442,13 +483,15 @@ def processar_planilhas():
         print(f"  → Corretos: {len(df_regras_corretas)}")
         print(f"  → Incorretos: {len(df_regras_incorretas)}")
         
-        # 4. Verificação das ofertas (apenas para os que não se enquadram nas regras anteriores)
-        resultados_ofertas = []
+        # 4. Verificação das ofertas - PRIMEIRO CB, DEPOIS VOG
+        resultados_ofertas_cb = []
+        resultados_ofertas_vog = []
         registros_sem_oferta = []
         logs_erros = []
         
-        # Otimização: Criar dicionário de ofertas por código para acesso rápido
-        ofertas_por_codigo = df_ofertas.groupby('COD')
+        # Otimização: Criar dicionários de ofertas por código para acesso rápido
+        ofertas_cb_por_codigo = df_ofertas_cb.groupby('CD_PROD')
+        ofertas_vog_por_codigo = df_ofertas_vog.groupby('COD')
         
         for idx, row in df_sem_regra.iterrows():
             try:
@@ -459,52 +502,94 @@ def processar_planilhas():
                 grupo = str(row['GRUPO']).strip().upper()
                 grupo_produto = str(row['GRUPO PRODUTO']).strip().upper()
         
-                # Verificar se existe oferta para este código
-                if cod not in ofertas_por_codigo.groups:
-                    registros_sem_oferta.append(row.to_dict())
-                    continue
-                
-                # Buscar oferta específica
-                ofertas_cod = ofertas_por_codigo.get_group(cod)
-                oferta = encontrar_oferta_mais_proxima(ofertas_cod, cod, data)
+                # PRIMEIRO: Verificar se existe oferta CB para este código
+                if cod in ofertas_cb_por_codigo.groups:
+                    # Buscar oferta CB específica
+                    ofertas_cod_cb = ofertas_cb_por_codigo.get_group(cod)
+                    oferta_cb = encontrar_oferta_cb_mais_proxima(ofertas_cod_cb, cod, data)
         
-                if oferta is not None:
-                    preco_oferta = float(oferta['3%'])
-                    
-                    # NOVA LÓGICA: Verificar se é STYLLUS, ROD E RAF ou CALVO com grupos específicos para aplicar o desconto de 5%
-                    grupos_especiais = ['STYLLUS', 'ROD E RAF']
-                    
-                    # CALVO só aplica desconto de 5% para grupos específicos
-                    if grupo == 'CALVO' and grupo_produto in ['MIUDOS BOVINOS', 'CORTES DE FRANGO', 'SUINOS']:
-                        grupos_especiais.append('CALVO')
-                    
-                    if grupo in grupos_especiais:
-                        preco_comparacao = preco * 0.95  # Preço - 5%
+                    if oferta_cb is not None:
+                        preco_oferta_cb = float(oferta_cb['2%'])
+                        
+                        # Aplicar desconto de 5% para grupos especiais
+                        grupos_especiais = ['STYLLUS', 'ROD E RAF']
+                        if grupo == 'CALVO' and grupo_produto in ['MIUDOS BOVINOS', 'CORTES DE FRANGO', 'SUINOS']:
+                            grupos_especiais.append('CALVO')
+                        
+                        if grupo in grupos_especiais:
+                            preco_comparacao = preco * 0.95  # Preço - 5%
+                        else:
+                            preco_comparacao = preco  # Mantém o preço normal
+                        
+                        # Lógica de classificação para CB: 2% se >=, 1% se <
+                        if preco_comparacao >= preco_oferta_cb:
+                            comissao = 2
+                        else:
+                            comissao = 1
+            
+                        if is_devolucao:
+                            comissao *= -1
+            
+                        # Adicionar o preço -5% apenas para os grupos especiais
+                        preco_menos_5 = preco * 0.95 if grupo in grupos_especiais else None
+                        
+                        resultados_ofertas_cb.append({
+                            **row.to_dict(),
+                            'Preço_Oferta': preco_oferta_cb,
+                            'Preço - 5%': preco_menos_5,
+                            'Data_Oferta': oferta_cb['DT_REF'],
+                            'Comissão_Correta': comissao,
+                            'Status': 'Correto' if row['P. Com'] == comissao else 'Incorreto',
+                            'Tipo': 'CB',
+                            'Tipo_Oferta': 'Exata' if oferta_cb['DT_REF'] == data else 'Data Proxima',
+                            'Diferença_Preço': f"{(preco_comparacao - preco_oferta_cb)/preco_oferta_cb:.2%}" if preco_oferta_cb != 0 else 'Div/Zero'
+                        })
+                        continue  # Pula para o próximo registro, já encontrou em CB
+        
+                # SEGUNDO: Se não encontrou em CB, verificar em VOG
+                if cod in ofertas_vog_por_codigo.groups:
+                    # Buscar oferta VOG específica
+                    ofertas_cod_vog = ofertas_vog_por_codigo.get_group(cod)
+                    oferta_vog = encontrar_oferta_mais_proxima(ofertas_cod_vog, cod, data)
+        
+                    if oferta_vog is not None:
+                        preco_oferta_vog = float(oferta_vog['3%'])
+                        
+                        # Aplicar desconto de 5% para grupos especiais
+                        grupos_especiais = ['STYLLUS', 'ROD E RAF']
+                        if grupo == 'CALVO' and grupo_produto in ['MIUDOS BOVINOS', 'CORTES DE FRANGO', 'SUINOS']:
+                            grupos_especiais.append('CALVO')
+                        
+                        if grupo in grupos_especiais:
+                            preco_comparacao = preco * 0.95  # Preço - 5%
+                        else:
+                            preco_comparacao = preco  # Mantém o preço normal
+                        
+                        # Lógica de classificação para VOG: 3% se >=, 1% se <
+                        if preco_comparacao >= preco_oferta_vog:
+                            comissao = 3
+                        else:
+                            comissao = 1
+            
+                        if is_devolucao:
+                            comissao *= -1
+            
+                        # Adicionar o preço -5% apenas para os grupos especiais
+                        preco_menos_5 = preco * 0.95 if grupo in grupos_especiais else None
+                        
+                        resultados_ofertas_vog.append({
+                            **row.to_dict(),
+                            'Preço_Oferta': preco_oferta_vog,
+                            'Preço - 5%': preco_menos_5,
+                            'Data_Oferta': oferta_vog['Data'],
+                            'Comissão_Correta': comissao,
+                            'Status': 'Correto' if row['P. Com'] == comissao else 'Incorreto',
+                            'Tipo': 'VOG',
+                            'Tipo_Oferta': 'Exata' if oferta_vog['Data'] == data else 'Data Proxima',
+                            'Diferença_Preço': f"{(preco_comparacao - preco_oferta_vog)/preco_oferta_vog:.2%}" if preco_oferta_vog != 0 else 'Div/Zero'
+                        })
                     else:
-                        preco_comparacao = preco  # Mantém o preço normal
-                    
-                    # Nova lógica de classificação:
-                    if preco_comparacao >= preco_oferta:
-                        comissao = 3
-                    else:
-                        comissao = 1
-        
-                    if is_devolucao:
-                        comissao *= -1
-        
-                    # Adicionar o preço -5% apenas para os grupos especiais
-                    preco_menos_5 = preco * 0.95 if grupo in grupos_especiais else None
-                    
-                    resultados_ofertas.append({
-                        **row.to_dict(),
-                        'Preço_Oferta': preco_oferta,
-                        'Preço - 5%': preco_menos_5,
-                        'Data_Oferta': oferta['Data'],
-                        'Comissão_Correta': comissao,
-                        'Status': 'Correto' if row['P. Com'] == comissao else 'Incorreto',
-                        'Tipo': 'Exata' if oferta['Data'] == data else 'Data Proxima',
-                        'Diferença_Preço': f"{(preco_comparacao - preco_oferta)/preco_oferta:.2%}" if preco_oferta != 0 else 'Div/Zero'
-                    })
+                        registros_sem_oferta.append(row.to_dict())
                 else:
                     registros_sem_oferta.append(row.to_dict())
         
@@ -517,102 +602,97 @@ def processar_planilhas():
                     'Mensagem': f'Erro ao processar: {str(e)}'
                 })
     
+        # Combinar resultados de ofertas CB e VOG
+        resultados_ofertas = resultados_ofertas_cb + resultados_ofertas_vog
+        
         # Criar DataFrames de resultados
         df_resultados_ofertas = pd.DataFrame(resultados_ofertas) if resultados_ofertas else pd.DataFrame()
         df_sem_oferta_final = pd.DataFrame(registros_sem_oferta) if registros_sem_oferta else pd.DataFrame()
         df_logs_erros = pd.DataFrame(logs_erros) if logs_erros else pd.DataFrame()
 
-        print(f"- Itens com oferta encontrada: {len(df_resultados_ofertas)}")
+        print(f"- Itens com oferta CB encontrada: {len(resultados_ofertas_cb)}")
+        print(f"- Itens com oferta VOG encontrada: {len(resultados_ofertas_vog)}")
         print(f"- Itens sem oferta encontrada: {len(df_sem_oferta_final)}")
         print(f"- Erros durante o processamento: {len(df_logs_erros)}")
 
-       # 5. Exportar para Excel
+        # 5. Exportar para Excel
         print(f"\n8. SALVANDO RESULTADOS EM: {caminho_downloads}")
         with pd.ExcelWriter(caminho_downloads, engine='openpyxl') as writer:
-            # 1. Comissão por Kg - Remover apenas Comissao_Kg e renomear aba (substituindo / por -)
+            # 1. Comissão por Kg
             if not df_comissao_kg.empty:
                 df_comissao_kg.drop(columns=['Comissao_Kg'], errors='ignore').to_excel(
-                    writer, sheet_name='Comissão-kg', index=False)  # Alterado para hífen
+                    writer, sheet_name='Comissão-kg', index=False)
 
-            # 2. Regras Corretas - Reordenar e renomear colunas
+            # 2. Regras Corretas
             if not df_regras_corretas.empty:
                 df_regras_corretas = df_regras_corretas.drop(
                     columns=['Comissao_Kg', 'Status'], errors='ignore')
                 
-                # Reordenar colunas e renomear
                 colunas_ordenadas = ['RAZAO', 'GRUPO', 'NF-E', 'DATA', 'VENDEDOR', 'CODPRODUTO',
                                     'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'P. Com', 'Comissao_Esperada']
                 df_regras_corretas = df_regras_corretas[colunas_ordenadas].rename(
                     columns={'Comissao_Esperada': 'O Com'})
                 
-                # Adicionar espaçamento
                 df_regras_corretas = df_regras_corretas.style.set_properties(**{'text-align': 'left'})
                 df_regras_corretas.to_excel(writer, sheet_name='O Regras', index=False)
 
-            # 3. Regras Incorretas - Reordenar e renomear colunas
+            # 3. Regras Incorretas
             if not df_regras_incorretas.empty:
                 df_regras_incorretas = df_regras_incorretas.drop(
                     columns=['Comissao_Kg', 'Status'], errors='ignore')
                 
-                # Reordenar colunas e renomear
                 colunas_ordenadas = ['RAZAO', 'GRUPO', 'NF-E', 'DATA', 'VENDEDOR', 'CODPRODUTO',
                                     'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'P. Com', 'Comissao_Esperada']
                 df_regras_incorretas = df_regras_incorretas[colunas_ordenadas].rename(
                     columns={'Comissao_Esperada': 'O Com'})
                 
-                # Adicionar espaçamento
                 df_regras_incorretas = df_regras_incorretas.style.set_properties(**{'text-align': 'left'})
                 df_regras_incorretas.to_excel(writer, sheet_name='X Regras', index=False)
 
-            # 4. Ofertas Corretas - Reordenar, renomear e remover colunas
+            # 4. Ofertas Corretas
             if not df_resultados_ofertas.empty:
                 df_ofertas_corretas = df_resultados_ofertas[df_resultados_ofertas['Status'] == 'Correto']
                 if not df_ofertas_corretas.empty:
                     df_ofertas_corretas = df_ofertas_corretas.drop(
-                        columns=['Comissao_Kg', 'Comissao_Esperada', 'Diferença_Preço', 'Status', 'Tipo'], 
+                        columns=['Comissao_Kg', 'Comissao_Esperada', 'Diferença_Preço', 'Status', 'Tipo_Oferta'], 
                         errors='ignore')
                     
-                    # Reordenar colunas e renomear
                     colunas_ordenadas = ['CF', 'RAZAO', 'GRUPO', 'NF-E', 'VENDEDOR', 'CODPRODUTO',
                                        'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'Preço - 5%', 'DATA',
-                                       'P. Com', 'Preço_Oferta', 'Data_Oferta', 'Comissão_Correta']
+                                       'P. Com', 'Preço_Oferta', 'Data_Oferta', 'Comissão_Correta', 'Tipo']
                     df_ofertas_corretas = df_ofertas_corretas[colunas_ordenadas].rename(
                         columns={'Comissão_Correta': 'O Com'})
                     
-                    # Adicionar espaçamento
                     df_ofertas_corretas = df_ofertas_corretas.style.set_properties(**{'text-align': 'left'})
                     df_ofertas_corretas.to_excel(writer, sheet_name='O Ofertas', index=False)
 
-            # 5. Ofertas Incorretas - Reordenar, renomear e remover colunas
+            # 5. Ofertas Incorretas
             if not df_resultados_ofertas.empty:
                 df_ofertas_incorretas = df_resultados_ofertas[df_resultados_ofertas['Status'] == 'Incorreto']
                 if not df_ofertas_incorretas.empty:
                     df_ofertas_incorretas = df_ofertas_incorretas.drop(
-                        columns=['Comissao_Kg', 'Comissao_Esperada', 'Diferença_Preço', 'Status', 'Tipo'], 
+                        columns=['Comissao_Kg', 'Comissao_Esperada', 'Diferença_Preço', 'Status', 'Tipo_Oferta'], 
                         errors='ignore')
                     
-                    # Reordenar colunas e renomear
                     colunas_ordenadas = ['CF', 'RAZAO', 'GRUPO', 'NF-E', 'VENDEDOR', 'CODPRODUTO',
                                        'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'Preço - 5%', 'DATA',
-                                       'P. Com', 'Preço_Oferta', 'Data_Oferta', 'Comissão_Correta']
+                                       'P. Com', 'Preço_Oferta', 'Data_Oferta', 'Comissão_Correta', 'Tipo']
                     df_ofertas_incorretas = df_ofertas_incorretas[colunas_ordenadas].rename(
                         columns={'Comissão_Correta': 'O Com'})
                     
-                    # Adicionar espaçamento
                     df_ofertas_incorretas = df_ofertas_incorretas.style.set_properties(**{'text-align': 'left'})
                     df_ofertas_incorretas.to_excel(writer, sheet_name='X Ofertas', index=False)
 
-            # 6. Sem Oferta - Sem alterações além do drop já existente
+            # 6. Sem Oferta
             if not df_sem_oferta_final.empty:
                 df_sem_oferta_final = df_sem_oferta_final.drop(
                     columns=['Comissao_Kg', 'Comissao_Esperada'], 
                     errors='ignore')
                 
-                # Adicionar espaçamento
                 df_sem_oferta_final = df_sem_oferta_final.style.set_properties(**{'text-align': 'left'})
                 df_sem_oferta_final.to_excel(writer, sheet_name='Sem Oferta', index=False)
 
-            # 7. Logs de erros - Sem alterações
+            # 7. Logs de erros
             if not df_logs_erros.empty:
                 df_logs_erros = df_logs_erros.style.set_properties(**{'text-align': 'left'})
                 df_logs_erros.to_excel(writer, sheet_name='Logs Erros', index=False)
