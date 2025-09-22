@@ -119,7 +119,6 @@ def criar_regras_comissao_kg():
     return regras
 
 def criar_regras_comissao_fixa():
-    # ... (mantido igual ao código original)
     regras = {
         'geral': {
             '0%': {
@@ -207,23 +206,6 @@ def criar_regras_comissao_fixa():
             'WANDERLEY GOMES MORENO': {
                 '3%_codigos': [1893, 1886]
             }
-        },
-        'vendedores_especificos': {
-            'ELISANGELA CRUZ DOS SANTOS OLIVEIRA': {
-                '2%': {
-                    'grupos_produto': ['CORTES BOVINOS']
-                }
-            },
-            'HERMELINA MARIA COSTA': {
-                '2%': {
-                    'grupos_produto': ['CORTES BOVINOS']
-                }
-            },
-            'SIDILENE PASSOS DE FREITAS': {
-                '2%': {
-                    'grupos_produto': ['CORTES BOVINOS']
-                }
-            }
         }
     }
     return regras
@@ -274,12 +256,8 @@ def aplicar_regras_comissao_fixa(row, regras):
     is_devolucao = str(row['CF']).startswith('DEV')
     
     # --- NOVA REGRA: POR NF-E E PRODUTO ---
-    # NF-E 105790 o produto 1659 seria 0%
-    if nfe == '105790' and codproduto == 1750:
-        return _ajustar_para_devolucao(0, is_devolucao)
-    
-    # NF-E 105294 o produto 1750 seria 1%
-    if nfe == '105294' and codproduto == 1659:
+    # NF-E 107523 o produto 869 seria 1%
+    if nfe == '107523' and codproduto == 869:
         return _ajustar_para_devolucao(1, is_devolucao)
     
     # --- NOVA REGRA: POR PRODUTO ---
@@ -417,7 +395,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\Margem_250908 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\Margem_250919 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
