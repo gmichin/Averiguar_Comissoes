@@ -132,7 +132,8 @@ def criar_regras_comissao_fixa():
                     'DISTRIBUIDORA E COMERCIO UAI SP LTDA',
                     "GARFETO'S FORNECIMENTO DE REFEICOES LTDA", "LATICINIO SOBERANO LTDA VILA ALPINA",
                     "SAO LORENZO ALIMENTOS LTDA",
-                    "QUE DELICIA MENDES COMERCIO DE ALIMENTOS"
+                    "QUE DELICIA MENDES COMERCIO DE ALIMENTOS",
+                    "MARIANA OLIVEIRA MAZZEI"
                 ]
             },
             '3%': {
