@@ -68,7 +68,6 @@ def encontrar_oferta_cb_mais_proxima(df_ofertas_cb, codproduto, data_venda):
         return None
 
 def criar_regras_comissao_kg():
-    # ... (mantido igual ao código original)
     regras = {
         'TODOS': {
             'grupo': ['LOURENCINI'] 
@@ -330,20 +329,6 @@ def aplicar_regras_comissao_fixa(row, regras):
         if codproduto in [1265, 1266, 812, 1115, 798]:
             return _ajustar_para_devolucao(1, is_devolucao)
     
-    # --- NOVA REGRA PARA ROLDÃO ---
-    if grupo == 'ROLDAO':
-        grupos_0_percent = [
-            'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
-            'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGÃO', 
-            'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
-            'KITS FEIJOADDA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
-        ]
-        
-        if grupo_produto in grupos_0_percent:
-            return _ajustar_para_devolucao(0, is_devolucao)
-        else:
-            return _ajustar_para_devolucao(1, is_devolucao)
-    
     if grupo == 'REDE PLUS':
         if grupo_produto in ['TEMPERADOS']:
             return _ajustar_para_devolucao(3, is_devolucao)
@@ -396,7 +381,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\Margem_250919 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\Margem_250925 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
