@@ -70,30 +70,30 @@ def encontrar_oferta_cb_mais_proxima(df_ofertas_cb, codproduto, data_venda):
 def criar_regras_comissao_kg():
     regras = {
         'TODOS': {
-            'grupo': ['LOURENCINI'] 
+            'grupo': ['REDE LOURENCINI'] 
         },
         'FELIPE RAMALHO GOMES': {
-            'grupo_codigos': {'BERGAMINI': [700]} 
+            'grupo_codigos': {'VAREJO BERGAMINI': [700]} 
         },
         'LUIZ FERNANDO VOLTERO BARBOSA': {
             'grupo_codigos': {
                 'REDE PLUS': [812],
-                'CHAMA': [812]
+                'REDE CHAMA': [812]
             }
         },
         'VALDENIR VOLTERO - PRETO': {
-            'grupo_codigos': {'RICOY': [812, 937]},
+            'grupo_codigos': {'REDE RICOY': [812, 937]},
             'razao_codigos': {'LATICINIO SOBERANO LTDA VILA ALPINA': [1707, 1708, 1709]}
         },
         'VERA LUCIA MUNIZ': {
-            'grupo_codigos': {'MOTA NOVO': [812]},
+            'grupo_codigos': {'VAREJO MOTA NOVO': [812]},
             'razao_codigos': {'SUPERMERCADO FEDERZONI LTDA': [812]}
         },
         'PAMELA FERREIRA VIEIRA': {
             'grupo_codigos': {
                 'REDE PLUS': [812],
-                'VIOLETA': [812],
-                'HANJO': [812]
+                'REDE VIOLETA': [812],
+                'REDE HANJO': [812]
             },
             'razao_codigos': {
                 'MERCADINHO VILA NOVA BONSUCESSO LTDA': [812],
@@ -122,9 +122,9 @@ def criar_regras_comissao_fixa():
         'geral': {
             '0%': {
                 'grupos': [
-                    'AKKI ATACADISTA', 'ANDORINHA', 'BERGAMINI', 'DA PRACA', 'DOVALE',
-                    'MERCADAO ATACADISTA', 'REIMBERG', 'SEMAR', 'TRIMAIS', 'VOVO ZUZU',
-                    'BENGALA', 'OURINHOS'
+                    'REDE AKKI', 'VAREJO ANDORINHA', 'VAREJO BERGAMINI', 'REDE DA PRACA', 'REDE DOVALE',
+                    'REDE MERCADAO', 'REDE REIMBERG', 'REDE SEMAR', 'REDE TRIMAIS', 'REDE VOVO ZUZU',
+                    'REDE BENGALA', 'VAREJO OURINHOS'
                 ],
                 'razoes': [
                     'COMERCIO DE CARNES E ROTISSERIE DUTRA LT',
@@ -137,20 +137,20 @@ def criar_regras_comissao_fixa():
                 ]
             },
             '3%': {
-                'grupos': ['CALVO', 'CHAMA', 'ESTRELA AZUL', 'TENDA', 'HIGAS'],
+                'grupos': ['REDE CALVO', 'REDE CHAMA', 'REDE ESTRELA AZUL', 'REDE TENDA', 'REDE HIGAS'],
             },
             '1%': {
-                'grupos': ['ROLDAO'],
+                'grupos': ['REDE ROLDAO'],
                 'razoes': ['SHOPPING FARTURA VALINHOS COMERCIO LTDA']
             }
         },
         'grupos_especificos': {
-            'STYLLUS': {
-                '0%': {
+            'REDE STYLLUS': {
+                '3%': {
                     'grupos_produto': ['TORRESMO', 'SALAME UAI', 'EMPANADOS']
                 }
             },
-            'ROSSI': {
+            'REDE ROSSI': {
                 '3%': [1288, 1289, 1287, 937, 1698, 1701, 1587, 1700, 1586, 1699],
                 '1%': [1265, 1266, 812, 1115, 798, 1211],
                 '0%': {
@@ -170,7 +170,7 @@ def criar_regras_comissao_fixa():
                     'codigos': [812]
                 }
             },
-            'CENCOSUD': {
+            'REDE CENCOSUD': {
                 '1%': {
                     'grupos_produto': ['SALAME UAI']
                 },
@@ -178,13 +178,13 @@ def criar_regras_comissao_fixa():
                     'todos_exceto': ['SALGADOS SUINOS EMBALADOS']
                 }
             },
-            'ROLDAO': {
+            'REDE ROLDAO': {
                 '0%': {
                     'grupos_produto': [
-                        'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
+                        'CONGELADOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
                         'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGÃO', 
                         'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
-                        'KITS FEIJOADDA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
+                        'KITS FEIJOADDA', 'SUINOS', 'TEMPERADOS'
                     ]
                 },
                 '1%': {
@@ -256,16 +256,6 @@ def aplicar_regras_comissao_fixa(row, regras):
     nfe = str(row['NF-E']).strip()
     is_devolucao = str(row['CF']).startswith('DEV')
     
-    # --- NOVA REGRA: POR NF-E E PRODUTO ---
-    # NF-E 107523 o produto 869 seria 1%
-    if nfe == '107523' and codproduto == 869:
-        return _ajustar_para_devolucao(1, is_devolucao)
-    
-    # --- NOVA REGRA: POR PRODUTO ---
-    # Todos os produtos de código 1807 vai ser 1%
-    if codproduto == 1807:
-        return _ajustar_para_devolucao(1, is_devolucao)
-    
     # --- VERIFICAÇÃO POR VENDEDOR ESPECÍFICO ---
     if 'vendedores_especificos' in regras:
         if vendedor in regras['vendedores_especificos']:
@@ -277,7 +267,7 @@ def aplicar_regras_comissao_fixa(row, regras):
                         return _ajustar_para_devolucao(int(porcentagem.replace('%', '')), is_devolucao)
     
     # --- NOVA REGRA PARA CALVO - deve ser processada por ofertas ---
-    if grupo == 'CALVO':
+    if grupo == 'REDE CALVO':
         # Se for MIUDOS BOVINOS, CORTES DE FRANGO ou SUINOS, processa por ofertas
         if grupo_produto in ['MIUDOS BOVINOS', 'CORTES DE FRANGO', 'SUINOS']:
             return None  # Retorna None para que seja processado por ofertas
@@ -285,7 +275,7 @@ def aplicar_regras_comissao_fixa(row, regras):
         # Todo o resto do CALVO é 3%
         return _ajustar_para_devolucao(3, is_devolucao)
     
-    if 'CENCOSUD' in grupo:
+    if 'REDE CENCOSUD' in grupo:
         if 'SALAME UAI' in grupo_produto:
             return _ajustar_para_devolucao(1, is_devolucao)
         return _ajustar_para_devolucao(3, is_devolucao)
@@ -306,7 +296,7 @@ def aplicar_regras_comissao_fixa(row, regras):
                     return _ajustar_para_devolucao(porcentagem, is_devolucao)
     
     # --- REGRAS ESPECÍFICAS POR GRUPO (COM ORDEM DE PRIORIDADE) ---
-    if grupo == 'ROSSI':
+    if grupo == 'REDE ROSSI':
         # PRIMEIRO verifica a regra de 0% (mais específica)
         if codproduto == 1139:
             return _ajustar_para_devolucao(0, is_devolucao)
@@ -382,7 +372,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\Margem_250930 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\Margem_251006 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
