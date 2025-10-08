@@ -146,7 +146,7 @@ def criar_regras_comissao_fixa():
         },
         'grupos_especificos': {
             'REDE STYLLUS': {
-                '3%': {
+                '0%': {
                     'grupos_produto': ['TORRESMO', 'SALAME UAI', 'EMPANADOS']
                 }
             },
@@ -379,7 +379,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\OneDrive\Documentos\Margens de fechamento\Margem_250930 - wapp - v3.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\Margem_251007 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
