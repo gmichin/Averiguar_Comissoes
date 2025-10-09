@@ -140,7 +140,6 @@ def criar_regras_comissao_fixa():
                 'grupos': ['VAREJO CALVO', 'REDE CHAMA', 'REDE ESTRELA AZUL', 'REDE TENDA', 'REDE HIGAS'],
             },
             '1%': {
-                'grupos': ['REDE ROLDAO'],
                 'razoes': ['SHOPPING FARTURA VALINHOS COMERCIO LTDA']
             }
         },
@@ -179,15 +178,15 @@ def criar_regras_comissao_fixa():
                 }
             },
             'REDE ROLDAO': {
-                '0%': {
+                '2%': {
                     'grupos_produto': [
-                        'CONGELADOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
+                        'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
                         'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGÃO', 
                         'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
-                        'KITS FEIJOADDA', 'SUINOS', 'TEMPERADOS'
+                        'KITS FEIJOADDA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
                     ]
                 },
-                '1%': {
+                '0%': {
                     'todos_exceto': [
                         'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
                         'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGÃO', 
@@ -247,7 +246,6 @@ def pertence_comissao_kg(row, regras):
 
 def aplicar_regras_comissao_fixa(row, regras):
     """Aplica as regras de comissão fixa de forma dinâmica"""
-    # ... (mantido igual ao código original)
     vendedor = str(row['VENDEDOR']).strip().upper()
     grupo = str(row['GRUPO']).strip().upper()
     razao = str(row['RAZAO']).strip().upper()
@@ -256,11 +254,24 @@ def aplicar_regras_comissao_fixa(row, regras):
     nfe = str(row['NF-E']).strip()
     is_devolucao = str(row['CF']).startswith('DEV')
 
-    
     # --- NOVA REGRA: POR PRODUTO ---
     # Todos os produtos de código 1807 vai ser 1%
     if codproduto == 1807:
         return _ajustar_para_devolucao(1, is_devolucao)
+    
+    # --- REGRA ESPECÍFICA PARA REDE ROLDAO ---
+    if grupo == 'REDE ROLDAO':
+        grupos_2_percent = [
+            'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
+            'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGÃO', 
+            'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
+            'KITS FEIJOADDA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
+        ]
+        
+        if grupo_produto in grupos_2_percent:
+            return _ajustar_para_devolucao(2, is_devolucao)
+        else:
+            return _ajustar_para_devolucao(0, is_devolucao)
     
 
     # --- VERIFICAÇÃO POR VENDEDOR ESPECÍFICO ---
@@ -379,7 +390,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\Margem_251007 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\Margem_251008 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
