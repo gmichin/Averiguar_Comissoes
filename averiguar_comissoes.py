@@ -118,97 +118,99 @@ def criar_regras_comissao_kg():
     return regras
 
 def criar_regras_comissao_fixa():
-    regras = {
+    return {
         'geral': {
-            '0%': {
+            0.00: {  # Mudar de '0.00' para 0.00 (float)
                 'grupos': [
                     'REDE AKKI', 'VAREJO ANDORINHA', 'VAREJO BERGAMINI', 'REDE DA PRACA', 'REDE DOVALE',
                     'REDE MERCADAO', 'REDE REIMBERG', 'REDE SEMAR', 'REDE TRIMAIS', 'REDE VOVO ZUZU',
                     'REDE BENGALA', 'VAREJO OURINHOS'
                 ],
                 'razoes': [
-                    'COMERCIO DE CARNES E ROTISSERIE DUTRA LT',
+                    'COMERCIO DE CARNES E ROTISSERIE DUTRA LTDA',
                     'DISTRIBUIDORA E COMERCIO UAI SP LTDA',
-                    "GARFETO'S FORNECIMENTO DE REFEICOES LTDA", "LATICINIO SOBERANO LTDA VILA ALPINA",
+                    "GARFETO'S FORNECIMENTO DE REFEICOES LTDA", 
+                    "LATICINIO SOBERANO LTDA VILA ALPINA",
                     "SAO LORENZO ALIMENTOS LTDA",
                     "QUE DELICIA MENDES COMERCIO DE ALIMENTOS",
                     "MARIANA OLIVEIRA MAZZEI",
                     "LS SANTOS COMERCIO DE ALIMENTOS LTDA"
                 ]
             },
-            '3%': {
-                'grupos': ['VAREJO CALVO', 'REDE CHAMA', 'REDE ESTRELA AZUL', 'REDE TENDA', 'REDE HIGAS'],
+            0.03: {  # Mudar de '0.03' para 0.03 (float)
+                'grupos': ['VAREJO CALVO', 'REDE CHAMA', 'REDE ESTRELA AZUL', 'REDE TENDA', 'REDE HIGAS']
             },
-            '1%': {
+            0.01: {  # Mudar de '0.01' para 0.01 (float)
                 'razoes': ['SHOPPING FARTURA VALINHOS COMERCIO LTDA']
             }
         },
         'grupos_especificos': {
             'REDE STYLLUS': {
-                '0%': {
+                0.00: {  # Mudar de '0.00' para 0.00 (float)
                     'grupos_produto': ['TORRESMO', 'SALAME UAI', 'EMPANADOS']
                 }
             },
             'REDE ROSSI': {
-                '3%': [1288, 1289, 1287, 937, 1698, 1701, 1587, 1700, 1586, 1699],
-                '1%': [1265, 1266, 812, 1115, 798, 1211],
-                '0%': {
-                    'grupos_produto': ['EMBUTIDOS', 'EMBUTIDOS NOBRE', 'EMBUTIDOS SADIA', 
-                                       'EMBUTIDOS PERDIGAO', 'EMBUTIDOS AURORA', 'EMBUTIDOS SEARA', 
-                                       'SALAME UAI'],
+                0.03: [1288, 1289, 1287, 937, 1698, 1701, 1587, 1700, 1586, 1699],
+                0.01: [1265, 1266, 812, 1115, 798, 1211],
+                0.00: {  # Mudar de '0.00' para 0.00 (float)
+                    'grupos_produto': [
+                        'EMBUTIDOS', 'EMBUTIDOS NOBRE', 'EMBUTIDOS SADIA', 
+                        'EMBUTIDOS PERDIGAO', 'EMBUTIDOS AURORA', 'EMBUTIDOS SEARA', 
+                        'SALAME UAI'
+                    ],
                     'codigos': [1139]
                 },
-                '2%': {
+                0.02: {  # Mudar de '0.02' para 0.02 (float)
                     'grupos_produto': ['MIUDOS BOVINOS', 'SUINOS', 'SALGADOS SUINOS A GRANEL'],
                     'codigos': [700]
                 }
             },
             'REDE PLUS': {
-                '3%': {
+                0.03: {  # Mudar de '0.03' para 0.03 (float)
                     'grupos_produto': ['TEMPERADOS'],
                     'codigos': [812]
                 }
             },
             'REDE CENCOSUD': {
-                '1%': {
+                0.01: {  # Mudar de '0.01' para 0.01 (float)
                     'grupos_produto': ['SALAME UAI']
                 },
-                '3%': {
+                0.03: {  # Mudar de '0.03' para 0.03 (float)
                     'todos_exceto': ['SALGADOS SUINOS EMBALADOS']
                 }
             },
             'REDE ROLDAO': {
-                '2%': {
+                0.02: {  # Mudar de '0.02' para 0.02 (float)
                     'grupos_produto': [
                         'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
                         'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGÃO', 
                         'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
-                        'KITS FEIJOADDA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
+                        'KITS FEIJOADA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
                     ]
                 },
-                '0%': {
+                0.00: {  # Mudar de '0.00' para 0.00 (float)
                     'todos_exceto': [
                         'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
                         'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGÃO', 
                         'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
-                        'KITS FEIJOADDA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
+                        'KITS FEIJOADA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
                     ]
                 }
             }
         },
         'razoes_especificas': {
             'PAES E DOCES LEKA LTDA': {
-                '3%_codigos': [1893, 1886]
+                0.03: [1893, 1886]
             },
             'PAES E DOCES MICHELLI LTDA': {
-                '3%_codigos': [1893, 1886]
+                0.03: [1893, 1886]
             },
             'WANDERLEY GOMES MORENO': {
-                '3%_codigos': [1893, 1886]
+                0.03: [1893, 1886]
             }
         }
     }
-    return regras
 
 def pertence_comissao_kg(row, regras):
     """Verifica se o registro pertence à comissão por kg"""
@@ -265,25 +267,14 @@ def aplicar_regras_comissao_fixa(row, regras):
             'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
             'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGÃO', 
             'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
-            'KITS FEIJOADDA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
+            'KITS FEIJOADA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
         ]
         
         if grupo_produto in grupos_2_percent:
             return _ajustar_para_devolucao(2, is_devolucao)
         else:
             return _ajustar_para_devolucao(0, is_devolucao)
-    
 
-    # --- VERIFICAÇÃO POR VENDEDOR ESPECÍFICO ---
-    if 'vendedores_especificos' in regras:
-        if vendedor in regras['vendedores_especificos']:
-            regras_vendedor = regras['vendedores_especificos'][vendedor]
-            
-            for porcentagem, condicoes in regras_vendedor.items():
-                if 'grupos_produto' in condicoes:
-                    if grupo_produto in condicoes['grupos_produto']:
-                        return _ajustar_para_devolucao(int(porcentagem.replace('%', '')), is_devolucao)
-    
     # --- NOVA REGRA PARA CALVO - deve ser processada por ofertas ---
     if grupo == 'VAREJO CALVO':
         # Se for MIUDOS BOVINOS, CORTES DE FRANGO ou SUINOS, processa por ofertas
@@ -297,21 +288,6 @@ def aplicar_regras_comissao_fixa(row, regras):
         if 'SALAME UAI' in grupo_produto:
             return _ajustar_para_devolucao(1, is_devolucao)
         return _ajustar_para_devolucao(3, is_devolucao)
-    
-    # --- BLOCO PARA RAZÕES ESPECÍFICAS ---
-    if 'razoes_especificas' in regras:
-        if razao in regras['razoes_especificas']:
-            regras_razao = regras['razoes_especificas'][razao]
-            
-            for chave, valores in regras_razao.items():
-                if chave.endswith('_codigos') and codproduto in valores:
-                    porcentagem = int(chave.split('_')[0].replace('%', ''))
-                    return _ajustar_para_devolucao(porcentagem, is_devolucao)
-            
-            for chave, valores in regras_razao.items():
-                if not chave.endswith('_codigos') and grupo_produto in valores:
-                    porcentagem = int(chave.replace('%', ''))
-                    return _ajustar_para_devolucao(porcentagem, is_devolucao)
     
     # --- REGRAS ESPECÍFICAS POR GRUPO (COM ORDEM DE PRIORIDADE) ---
     if grupo == 'REDE ROSSI':
@@ -345,18 +321,18 @@ def aplicar_regras_comissao_fixa(row, regras):
         if codproduto == 812:
             return _ajustar_para_devolucao(3, is_devolucao)
     
-    # 2. Verifica outras regras específicas por grupo (mantendo a estrutura original)
+    # 2. Verifica outras regras específicas por grupo
     if grupo in regras['grupos_especificos']:
         regras_grupo = regras['grupos_especificos'][grupo]
         
         # Verificar primeiro as regras mais específicas (0%, depois 2%, etc.)
-        for porcentagem in ['0%', '2%', '1%', '3%']:  # Ordem de prioridade
+        for porcentagem in [0.00, 0.02, 0.01, 0.03]:  # Ordem de prioridade (agora como floats)
             if porcentagem in regras_grupo:
                 condicoes = regras_grupo[porcentagem]
                 
                 if isinstance(condicoes, list):
                     if codproduto in condicoes:
-                        return _ajustar_para_devolucao(int(porcentagem.replace('%', '')), is_devolucao)
+                        return _ajustar_para_devolucao(int(porcentagem * 100), is_devolucao)
                 
                 elif isinstance(condicoes, dict):
                     match = True
@@ -370,11 +346,11 @@ def aplicar_regras_comissao_fixa(row, regras):
                             match = False
                     
                     if match:
-                        return _ajustar_para_devolucao(int(porcentagem.replace('%', '')), is_devolucao)
+                        return _ajustar_para_devolucao(int(porcentagem * 100), is_devolucao)
     
     # 3. Verifica regras gerais
     for porcentagem, condicoes in regras['geral'].items():
-        porcentagem_num = int(porcentagem.replace('%', ''))
+        porcentagem_num = int(porcentagem * 100)  # Agora converte de float para int
         
         if 'grupos' in condicoes:
             if grupo in condicoes['grupos']:
@@ -390,7 +366,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\Margem_251008 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\Margem_251010 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
