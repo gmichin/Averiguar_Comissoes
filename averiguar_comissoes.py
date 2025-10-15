@@ -127,6 +127,7 @@ def criar_regras_comissao_fixa():
                     'REDE BENGALA', 'VAREJO OURINHOS'
                 ],
                 'razoes': [
+                    'COMERCIO DE CARNES E ROTISSERIE DUTRA LT',
                     'COMERCIO DE CARNES E ROTISSERIE DUTRA LTDA',
                     'DISTRIBUIDORA E COMERCIO UAI SP LTDA',
                     "GARFETO'S FORNECIMENTO DE REFEICOES LTDA", 
@@ -366,7 +367,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\Margem_251010 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\Margem_251014 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
