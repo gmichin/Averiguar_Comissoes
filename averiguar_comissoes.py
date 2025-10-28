@@ -258,9 +258,12 @@ def aplicar_regras_comissao_fixa(row, regras):
     nfe = str(row['NF-E']).strip()
     is_devolucao = str(row['CF']).startswith('DEV')
 
+    if nfe == '111880' and codproduto == 1950:
+        return _ajustar_para_devolucao(1, is_devolucao)
+
     # --- NOVA REGRA: POR PRODUTO ---
     # Todos os produtos de código 1807 vai ser 1%
-    if codproduto == 1807:
+    if codproduto == 1807 or codproduto == 947 or codproduto == 1914:
         return _ajustar_para_devolucao(1, is_devolucao)
     
     # --- REGRA ESPECÍFICA PARA REDE ROLDAO ---
@@ -368,7 +371,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\Margem_251021 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\Margem_251027 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
