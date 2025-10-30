@@ -124,7 +124,7 @@ def criar_regras_comissao_kg():
 def criar_regras_comissao_fixa():
     return {
         'geral': {
-            0.00: {  # Mudar de '0.00' para 0.00 (float)
+            0.00: { 
                 'grupos': [
                     'REDE AKKI', 'VAREJO ANDORINHA', 'VAREJO BERGAMINI', 'REDE DA PRACA', 'REDE DOVALE',
                     'REDE MERCADAO', 'REDE REIMBERG', 'REDE SEMAR', 'REDE TRIMAIS', 'REDE VOVO ZUZU',
@@ -142,23 +142,23 @@ def criar_regras_comissao_fixa():
                     "LS SANTOS COMERCIO DE ALIMENTOS LTDA"
                 ]
             },
-            0.03: {  # Mudar de '0.03' para 0.03 (float)
+            0.03: {
                 'grupos': ['VAREJO CALVO', 'REDE CHAMA', 'REDE ESTRELA AZUL', 'REDE TENDA', 'REDE HIGAS']
             },
-            0.01: {  # Mudar de '0.01' para 0.01 (float)
+            0.01: { 
                 'razoes': ['SHOPPING FARTURA VALINHOS COMERCIO LTDA']
             }
         },
         'grupos_especificos': {
             'REDE STYLLUS': {
-                0.00: {  # Mudar de '0.00' para 0.00 (float)
+                0.00: {
                     'grupos_produto': ['TORRESMO', 'SALAME UAI', 'EMPANADOS']
                 }
             },
             'REDE ROSSI': {
                 0.03: [1288, 1289, 1287, 937, 1698, 1701, 1587, 1700, 1586, 1699],
                 0.01: [1265, 1266, 812, 1115, 798, 1211],
-                0.00: {  # Mudar de '0.00' para 0.00 (float)
+                0.00: {
                     'grupos_produto': [
                         'EMBUTIDOS', 'EMBUTIDOS NOBRE', 'EMBUTIDOS SADIA', 
                         'EMBUTIDOS PERDIGAO', 'EMBUTIDOS AURORA', 'EMBUTIDOS SEARA', 
@@ -166,27 +166,27 @@ def criar_regras_comissao_fixa():
                     ],
                     'codigos': [1139]
                 },
-                0.02: {  # Mudar de '0.02' para 0.02 (float)
+                0.02: {
                     'grupos_produto': ['MIUDOS BOVINOS', 'SUINOS', 'SALGADOS SUINOS A GRANEL'],
                     'codigos': [700]
                 }
             },
             'REDE PLUS': {
-                0.03: {  # Mudar de '0.03' para 0.03 (float)
+                0.03: {
                     'grupos_produto': ['TEMPERADOS'],
                     'codigos': [812]
                 }
             },
             'REDE CENCOSUD': {
-                0.01: {  # Mudar de '0.01' para 0.01 (float)
+                0.01: {
                     'grupos_produto': ['SALAME UAI']
                 },
-                0.03: {  # Mudar de '0.03' para 0.03 (float)
+                0.03: {
                     'todos_exceto': ['SALGADOS SUINOS EMBALADOS']
                 }
             },
             'REDE ROLDAO': {
-                0.02: {  # Mudar de '0.02' para 0.02 (float)
+                0.02: {
                     'grupos_produto': [
                         'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
                         'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGÃO', 
@@ -194,7 +194,7 @@ def criar_regras_comissao_fixa():
                         'KITS FEIJOADA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
                     ]
                 },
-                0.00: {  # Mudar de '0.00' para 0.00 (float)
+                0.00: {
                     'todos_exceto': [
                         'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
                         'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGÃO', 
