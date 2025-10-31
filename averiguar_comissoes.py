@@ -156,7 +156,9 @@ def criar_regras_comissao_fixa():
                 }
             },
             'REDE ROSSI': {
-                0.03: [1288, 1289, 1287, 937, 1698, 1701, 1587, 1700, 1586, 1699],
+                0.03: {
+                    'codigos': [937, 1698, 1701, 1587, 1700, 1586, 1699, 943, 1735, 1624, 1134]
+                },
                 0.01: [1265, 1266, 812, 1115, 798, 1211],
                 0.00: {
                     'grupos_produto': [
@@ -299,7 +301,11 @@ def aplicar_regras_comissao_fixa(row, regras):
     
     # --- REGRAS ESPECÍFICAS POR GRUPO (COM ORDEM DE PRIORIDADE) ---
     if grupo == 'REDE ROSSI':
-        # PRIMEIRO verifica a regra de 0% (mais específica)
+        # PRIMEIRO verifica a regra de TORRESMO (3%) - APENAS POR CÓDIGOS
+        if codproduto in [937, 1698, 1701, 1587, 1700, 1586, 1699, 943, 1735, 1624, 1134]:
+            return _ajustar_para_devolucao(3, is_devolucao)
+        
+        # SEGUNDO verifica a regra de 0% 
         if codproduto == 1139:
             return _ajustar_para_devolucao(0, is_devolucao)
         
@@ -308,18 +314,15 @@ def aplicar_regras_comissao_fixa(row, regras):
                            'SALAME UAI']:
             return _ajustar_para_devolucao(0, is_devolucao)
         
-        # DEPOIS verifica a regra de 2%
+        # TERCEIRO verifica a regra de 2%
         if grupo_produto in ['MIUDOS BOVINOS', 'SUINOS', 'SALGADOS SUINOS A GRANEL']:
             return _ajustar_para_devolucao(2, is_devolucao)
         
         if codproduto == 700:
             return _ajustar_para_devolucao(2, is_devolucao)
         
-        # FINALMENTE verifica as listas de códigos
-        if codproduto in [1288, 1289, 1287, 937, 1698, 1701, 1587, 1700, 1586, 1699]:
-            return _ajustar_para_devolucao(3, is_devolucao)
-        
-        if codproduto in [1265, 1266, 812, 1115, 798]:
+        # QUARTO verifica a regra de 1%
+        if codproduto in [1265, 1266, 812, 1115, 798, 1211]:
             return _ajustar_para_devolucao(1, is_devolucao)
     
     if grupo == 'REDE PLUS':
@@ -374,7 +377,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\Margem_testes.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\Margem_251030 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
