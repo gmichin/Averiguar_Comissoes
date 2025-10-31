@@ -183,9 +183,6 @@ def criar_regras_comissao_fixa():
                 0.01: {
                     'grupos_produto': ['SALAME UAI']
                 },
-                0.03: {
-                    'todos_exceto': ['SALGADOS SUINOS EMBALADOS']
-                }
             },
             'REDE ROLDAO': {
                 0.02: {
