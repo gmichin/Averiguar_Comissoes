@@ -128,7 +128,7 @@ def criar_regras_comissao_fixa():
                 'grupos': [
                     'REDE AKKI', 'VAREJO ANDORINHA', 'VAREJO BERGAMINI', 'REDE DA PRACA', 'REDE DOVALE',
                     'REDE MERCADAO', 'REDE REIMBERG', 'REDE SEMAR', 'REDE TRIMAIS', 'REDE VOVO ZUZU',
-                    'REDE BENGALA', 'VAREJO OURINHOS'
+                    'REDE BENGALA', 'VAREJO OURINHOS', 'REDE RICOY'
                 ],
                 'razoes': [
                     'COMERCIO DE CARNES E ROTISSERIE DUTRA LT',
@@ -139,7 +139,8 @@ def criar_regras_comissao_fixa():
                     "SAO LORENZO ALIMENTOS LTDA",
                     "QUE DELICIA MENDES COMERCIO DE ALIMENTOS",
                     "MARIANA OLIVEIRA MAZZEI",
-                    "LS SANTOS COMERCIO DE ALIMENTOS LTDA"
+                    "LS SANTOS COMERCIO DE ALIMENTOS LTDA",
+                    "MERCADINHO LESSA LTDA"
                 ]
             },
             0.03: {
@@ -267,11 +268,30 @@ def aplicar_regras_comissao_fixa(row, regras):
 
     if nfe == '111880' and codproduto == 1950:
         return _ajustar_para_devolucao(1, is_devolucao)
+    
+    if nfe == '113139' and codproduto == 1464:
+        return _ajustar_para_devolucao(0, is_devolucao)
+    
+    if nfe == '113171' and codproduto == 1464:
+        return _ajustar_para_devolucao(0, is_devolucao)
+    
+    if nfe == '113223' and codproduto == 1464:
+        return _ajustar_para_devolucao(0, is_devolucao)
+    
+    if nfe == '113230' and codproduto == 1464:
+        return _ajustar_para_devolucao(0, is_devolucao)
+    
+    if nfe == '113253' and codproduto == 1464:
+        return _ajustar_para_devolucao(0, is_devolucao)
 
     # --- NOVA REGRA: POR PRODUTO ---
     # Todos os produtos de código 1807 vai ser 1%
     if codproduto == 1807 or codproduto == 947 or codproduto == 1914:
         return _ajustar_para_devolucao(1, is_devolucao)
+    
+    # --- NOVA REGRA: TODOS OS ITENS DA REDE RICOY = 0% ---
+    if grupo == 'REDE RICOY':
+        return _ajustar_para_devolucao(0, is_devolucao)
     
     # --- REGRA ESPECÍFICA PARA REDE ROLDAO ---
     if grupo == 'REDE ROLDAO':
@@ -380,7 +400,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\MRG_251106 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\MRG_251118 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
