@@ -140,7 +140,8 @@ def criar_regras_comissao_fixa():
                     "QUE DELICIA MENDES COMERCIO DE ALIMENTOS",
                     "MARIANA OLIVEIRA MAZZEI",
                     "LS SANTOS COMERCIO DE ALIMENTOS LTDA",
-                    "MERCADINHO LESSA LTDA"
+                    "MERCADINHO LESSA LTDA",
+                    "JSV SUPERMERCADOS EIRELI- LOJA 3"
                 ]
             },
             0.03: {
@@ -400,7 +401,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\MRG_251118 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\MRG_251125 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
