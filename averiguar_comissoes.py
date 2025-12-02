@@ -287,10 +287,10 @@ def aplicar_regras_comissao_fixa(row, regras):
 
     # --- NOVA REGRA: POR PRODUTO ---
     # Todos os produtos de código 1807 vai ser 1%
-    if codproduto == 1807 or codproduto == 947 or codproduto == 1914:
+    if codproduto == 1807 or codproduto == 947 or codproduto == 1914 and vendedor != "PROPRIO":
         return _ajustar_para_devolucao(1, is_devolucao)
     
-    if vendedor == "PROPRIO" or vendedor == "MIDIA":
+    if vendedor == "PROPRIO":
         return _ajustar_para_devolucao(0, is_devolucao)
     
     # --- NOVA REGRA: TODOS OS ITENS DA REDE RICOY = 0% ---
@@ -404,7 +404,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\MRG_251126 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\OneDrive\Documentos\Margens de fechamento\MRG_251130 - Fechamento.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
