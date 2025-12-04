@@ -3,7 +3,7 @@ from datetime import datetime
 import os
 import numpy as np
 
-def encontrar_oferta_mais_proxima(df_ofertas, codproduto, data_venda, coluna_comissao='3%'):
+def encontrar_oferta_mais_proxima(df_ofertas, codproduto, data_venda):
     try:
         # Conversão robusta dos dados de entrada
         cod = int(float(codproduto))
@@ -34,7 +34,7 @@ def encontrar_oferta_mais_proxima(df_ofertas, codproduto, data_venda, coluna_com
     except Exception as e:
         print(f"Erro ao buscar oferta para {codproduto}: {str(e)}")
         return None
-
+    
 def encontrar_oferta_cb_mais_proxima(df_ofertas_cb, codproduto, data_venda):
     try:
         # Conversão robusta dos dados de entrada
@@ -269,25 +269,9 @@ def aplicar_regras_comissao_fixa(row, regras):
 
     if nfe == '111880' and codproduto == 1950:
         return _ajustar_para_devolucao(1, is_devolucao)
-    
-    if nfe == '113139' and codproduto == 1464:
-        return _ajustar_para_devolucao(0, is_devolucao)
-    
-    if nfe == '113171' and codproduto == 1464:
-        return _ajustar_para_devolucao(0, is_devolucao)
-    
-    if nfe == '113223' and codproduto == 1464:
-        return _ajustar_para_devolucao(0, is_devolucao)
-    
-    if nfe == '113230' and codproduto == 1464:
-        return _ajustar_para_devolucao(0, is_devolucao)
-    
-    if nfe == '113253' and codproduto == 1464:
-        return _ajustar_para_devolucao(0, is_devolucao)
 
     # --- NOVA REGRA: POR PRODUTO ---
-    # Todos os produtos de código 1807 vai ser 1%
-    if codproduto == 1807 or codproduto == 947 or codproduto == 1914 and vendedor != "PROPRIO":
+    if codproduto == 1807 or codproduto == 947 or codproduto == 1914 or codproduto == 2000:
         return _ajustar_para_devolucao(1, is_devolucao)
     
     if vendedor == "PROPRIO":
@@ -404,7 +388,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\OneDrive\Documentos\Margens de fechamento\MRG_251130 - Fechamento.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\MRG_251203 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
@@ -425,11 +409,19 @@ def processar_planilhas():
         df_base['Preço_Venda'] = pd.to_numeric(df_base['Preço_Venda'], errors='coerce')
         
         # Ler as duas abas de ofertas
+        # AGORA LER A NOVA COLUNA "2%" NA ABA OFF_VOG
         df_ofertas_vog = pd.read_excel(caminho_origem, sheet_name='OFF_VOG')
-        df_ofertas_vog = df_ofertas_vog[['COD', 'ITENS', '3%', 'Data']].dropna(subset=['COD', 'Data'])
+        # Verifica se a coluna '2%' existe, se não existir, cria uma coluna vazia
+        colunas_ofertas_vog = ['COD', 'ITENS', '3%', 'Data']
+        if '2%' in df_ofertas_vog.columns:
+            colunas_ofertas_vog.insert(2, '2%')  # Insere '2%' entre 'ITENS' e '3%'
+        df_ofertas_vog = df_ofertas_vog[colunas_ofertas_vog].dropna(subset=['COD', 'Data'])
         df_ofertas_vog['Data'] = pd.to_datetime(df_ofertas_vog['Data']).dt.date
         df_ofertas_vog['COD'] = pd.to_numeric(df_ofertas_vog['COD'], errors='coerce').fillna(0).astype('int64')
         df_ofertas_vog['3%'] = pd.to_numeric(df_ofertas_vog['3%'], errors='coerce')
+        # Se existir a coluna '2%', converte para numérico
+        if '2%' in df_ofertas_vog.columns:
+            df_ofertas_vog['2%'] = pd.to_numeric(df_ofertas_vog['2%'], errors='coerce')
         print(f"- Total de OFERTAS_VOG cadastradas: {len(df_ofertas_vog)}")
         
         df_ofertas_cb = pd.read_excel(caminho_origem, sheet_name='OFF_VOG_CB')
@@ -470,7 +462,7 @@ def processar_planilhas():
         print(f"  → Corretos: {len(df_regras_corretas)}")
         print(f"  → Incorretos: {len(df_regras_incorretas)}")
         
-        # 4. Verificação das ofertas - PRIMEIRO CB, DEPOIS VOG
+         # 4. Verificação das ofertas - PRIMEIRO CB, DEPOIS VOG
         resultados_ofertas_cb = []
         resultados_ofertas_vog = []
         registros_sem_oferta = []
@@ -540,7 +532,11 @@ def processar_planilhas():
                     oferta_vog = encontrar_oferta_mais_proxima(ofertas_cod_vog, cod, data)
         
                     if oferta_vog is not None:
-                        preco_oferta_vog = float(oferta_vog['3%'])
+                        preco_oferta_3 = float(oferta_vog['3%'])
+                        
+                        # Verificar se tem coluna '2%' e se tem valor válido
+                        tem_2_percent = '2%' in oferta_vog and pd.notna(oferta_vog['2%']) and oferta_vog['2%'] > 0
+                        preco_oferta_2 = float(oferta_vog['2%']) if tem_2_percent else None
                         
                         # Aplicar desconto de 5% para grupos especiais
                         grupos_especiais = ['REDE STYLLUS', 'REDE ROD E RAF']
@@ -552,11 +548,21 @@ def processar_planilhas():
                         else:
                             preco_comparacao = preco  # Mantém o preço normal
                         
-                        # Lógica de classificação para VOG: 3% se >=, 1% se <
-                        if preco_comparacao >= preco_oferta_vog:
-                            comissao = 3
+                        # NOVA LÓGICA DE CLASSIFICAÇÃO PARA VOG COM 3 FAIXAS
+                        if tem_2_percent:
+                            # Com três faixas (3%, 2%, 1%)
+                            if preco_comparacao >= preco_oferta_3:
+                                comissao = 3
+                            elif preco_comparacao >= preco_oferta_2:
+                                comissao = 2
+                            else:
+                                comissao = 1
                         else:
-                            comissao = 1
+                            # Com apenas duas faixas (3%, 1%) - lógica anterior
+                            if preco_comparacao >= preco_oferta_3:
+                                comissao = 3
+                            else:
+                                comissao = 1
             
                         if is_devolucao:
                             comissao *= -1
@@ -564,17 +570,32 @@ def processar_planilhas():
                         # Adicionar o preço -5% apenas para os grupos especiais
                         preco_menos_5 = preco * 0.95 if grupo in grupos_especiais else None
                         
-                        resultados_ofertas_vog.append({
+                        # Preparar dados para o resultado
+                        resultado = {
                             **row.to_dict(),
-                            'Preço_Oferta': preco_oferta_vog,
+                            'Preço_Oferta_3%': preco_oferta_3,
                             'Preço - 5%': preco_menos_5,
                             'Data_Oferta': oferta_vog['Data'],
                             'Comissão_Correta': comissao,
                             'Status': 'Correto' if row['P. Com'] == comissao else 'Incorreto',
                             'Tipo': 'VOG',
-                            'Tipo_Oferta': 'Exata' if oferta_vog['Data'] == data else 'Data Proxima',
-                            'Diferença_Preço': f"{(preco_comparacao - preco_oferta_vog)/preco_oferta_vog:.2%}" if preco_oferta_vog != 0 else 'Div/Zero'
-                        })
+                            'Tipo_Oferta': 'Exata' if oferta_vog['Data'] == data else 'Data Proxima'
+                        }
+                        
+                        # Adicionar preço da oferta de 2% se existir
+                        if tem_2_percent:
+                            resultado['Preço_Oferta_2%'] = preco_oferta_2
+                            # Calcular diferença com base no preço de referência correto
+                            preco_referencia = preco_oferta_3 if comissao == 3 else (preco_oferta_2 if comissao == 2 else None)
+                            if preco_referencia:
+                                resultado['Diferença_Preço'] = f"{(preco_comparacao - preco_referencia)/preco_referencia:.2%}"
+                            else:
+                                resultado['Diferença_Preço'] = 'N/A'
+                        else:
+                            # Para ofertas sem 2%, usar a lógica anterior
+                            resultado['Diferença_Preço'] = f"{(preco_comparacao - preco_oferta_3)/preco_oferta_3:.2%}" if preco_oferta_3 != 0 else 'Div/Zero'
+                        
+                        resultados_ofertas_vog.append(resultado)
                     else:
                         registros_sem_oferta.append(row.to_dict())
                 else:
