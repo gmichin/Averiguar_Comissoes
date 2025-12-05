@@ -225,7 +225,6 @@ def criar_regras_comissao_fixa():
 
 def pertence_comissao_kg(row, regras):
     """Verifica se o registro pertence à comissão por kg"""
-    # ... (mantido igual ao código original)
     vendedor = str(row['VENDEDOR']).strip().upper()
     grupo = str(row['GRUPO']).strip().upper()
     razao = str(row['RAZAO']).strip().upper()
@@ -388,7 +387,7 @@ def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\MRG_251203 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\MRG_251204 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
@@ -424,12 +423,26 @@ def processar_planilhas():
             df_ofertas_vog['2%'] = pd.to_numeric(df_ofertas_vog['2%'], errors='coerce')
         print(f"- Total de OFERTAS_VOG cadastradas: {len(df_ofertas_vog)}")
         
+        # AGORA LER A NOVA COLUNA "3%" NA ABA OFF_VOG_CB (entre 'DS_PROD' e '2%')
         df_ofertas_cb = pd.read_excel(caminho_origem, sheet_name='OFF_VOG_CB')
-        df_ofertas_cb = df_ofertas_cb[['CD_PROD', 'GP_PROD', 'DS_PROD', '2%', '1%', 'DT_REF', 'QTDE_VENDAS', 'PK_OFF_CB']].dropna(subset=['CD_PROD', 'DT_REF'])
+        # Verificar se a coluna '3%' existe
+        colunas_ofertas_cb = ['CD_PROD', 'GP_PROD', 'DS_PROD', '2%', '1%', 'DT_REF', 'QTDE_VENDAS', 'PK_OFF_CB']
+        if '3%' in df_ofertas_cb.columns:
+            # Inserir '3%' entre 'DS_PROD' e '2%'
+            colunas_ofertas_cb = ['CD_PROD', 'GP_PROD', 'DS_PROD', '3%', '2%', '1%', 'DT_REF', 'QTDE_VENDAS', 'PK_OFF_CB']
+        
+        df_ofertas_cb = df_ofertas_cb[colunas_ofertas_cb].dropna(subset=['CD_PROD', 'DT_REF'])
         df_ofertas_cb['DT_REF'] = pd.to_datetime(df_ofertas_cb['DT_REF']).dt.date
         df_ofertas_cb['CD_PROD'] = pd.to_numeric(df_ofertas_cb['CD_PROD'], errors='coerce').fillna(0).astype('int64')
         df_ofertas_cb['2%'] = pd.to_numeric(df_ofertas_cb['2%'], errors='coerce')
+        
+        # Se existir a coluna '3%', converter para numérico
+        if '3%' in df_ofertas_cb.columns:
+            df_ofertas_cb['3%'] = pd.to_numeric(df_ofertas_cb['3%'], errors='coerce')
+        
         print(f"- Total de OFERTAS_CB cadastradas: {len(df_ofertas_cb)}")
+        if '3%' in df_ofertas_cb.columns:
+            print(f"- Coluna '3%' encontrada em OFF_VOG_CB: {df_ofertas_cb['3%'].notna().sum()} registros com valores")
         
         # 2. Aplicar regras de comissão por kg (primeiro filtro)
         regras_comissao_kg = criar_regras_comissao_kg()
@@ -488,23 +501,60 @@ def processar_planilhas():
                     oferta_cb = encontrar_oferta_cb_mais_proxima(ofertas_cod_cb, cod, data)
         
                     if oferta_cb is not None:
-                        preco_oferta_cb = float(oferta_cb['2%'])
+                        # VERIFICAR SE TEM COLUNA '3%' NA OFERTA CB
+                        tem_3_percent_cb = '3%' in oferta_cb and pd.notna(oferta_cb['3%']) and oferta_cb['3%'] > 0
+                        tem_2_percent_cb = pd.notna(oferta_cb['2%']) and oferta_cb['2%'] > 0
                         
-                        # Aplicar desconto de 5% para grupos especiais
-                        grupos_especiais = ['REDE STYLLUS', 'REDE ROD E RAF']
-                        if grupo == 'VAREJO CALVO' and grupo_produto in ['MIUDOS BOVINOS', 'CORTES DE FRANGO', 'SUINOS']:
-                            grupos_especiais.append('VAREJO CALVO')
-                        
-                        if grupo in grupos_especiais:
-                            preco_comparacao = preco * 0.95  # Preço - 5%
+                        if tem_3_percent_cb:
+                            # NOVA LÓGICA COM 3 FAIXAS (3%, 2%, 1%) para CB
+                            preco_oferta_3_cb = float(oferta_cb['3%'])
+                            preco_oferta_2_cb = float(oferta_cb['2%'])
+                            
+                            # Aplicar desconto de 5% para grupos especiais
+                            grupos_especiais = ['REDE STYLLUS', 'REDE ROD E RAF']
+                            if grupo == 'VAREJO CALVO' and grupo_produto in ['MIUDOS BOVINOS', 'CORTES DE FRANGO', 'SUINOS']:
+                                grupos_especiais.append('VAREJO CALVO')
+                            
+                            if grupo in grupos_especiais:
+                                preco_comparacao = preco * 0.95  # Preço - 5%
+                            else:
+                                preco_comparacao = preco  # Mantém o preço normal
+                            
+                            # Lógica de classificação para CB com 3 faixas
+                            if preco_comparacao >= preco_oferta_3_cb:
+                                comissao = 3
+                            elif preco_comparacao >= preco_oferta_2_cb:
+                                comissao = 2
+                            else:
+                                comissao = 1
+                                
+                            preco_oferta_2 = preco_oferta_2_cb
+                            preco_oferta_3 = preco_oferta_3_cb
+                            tem_2_percent = True
+                            
                         else:
-                            preco_comparacao = preco  # Mantém o preço normal
-                        
-                        # Lógica de classificação para CB: 2% se >=, 1% se <
-                        if preco_comparacao >= preco_oferta_cb:
-                            comissao = 2
-                        else:
-                            comissao = 1
+                            # LÓGICA ANTIGA (apenas 2%, 1%) para CB
+                            preco_oferta_2_cb = float(oferta_cb['2%'])
+                            
+                            # Aplicar desconto de 5% para grupos especiais
+                            grupos_especiais = ['REDE STYLLUS', 'REDE ROD E RAF']
+                            if grupo == 'VAREJO CALVO' and grupo_produto in ['MIUDOS BOVINOS', 'CORTES DE FRANGO', 'SUINOS']:
+                                grupos_especiais.append('VAREJO CALVO')
+                            
+                            if grupo in grupos_especiais:
+                                preco_comparacao = preco * 0.95  # Preço - 5%
+                            else:
+                                preco_comparacao = preco  # Mantém o preço normal
+                            
+                            # Lógica de classificação para CB: 2% se >=, 1% se <
+                            if preco_comparacao >= preco_oferta_2_cb:
+                                comissao = 2
+                            else:
+                                comissao = 1
+                                
+                            preco_oferta_2 = preco_oferta_2_cb
+                            preco_oferta_3 = None
+                            tem_2_percent = False
             
                         if is_devolucao:
                             comissao *= -1
@@ -512,17 +562,38 @@ def processar_planilhas():
                         # Adicionar o preço -5% apenas para os grupos especiais
                         preco_menos_5 = preco * 0.95 if grupo in grupos_especiais else None
                         
-                        resultados_ofertas_cb.append({
+                        # Preparar dados para o resultado CB
+                        resultado_cb = {
                             **row.to_dict(),
-                            'Preço_Oferta': preco_oferta_cb,
                             'Preço - 5%': preco_menos_5,
                             'Data_Oferta': oferta_cb['DT_REF'],
                             'Comissão_Correta': comissao,
                             'Status': 'Correto' if row['P. Com'] == comissao else 'Incorreto',
                             'Tipo': 'CB',
-                            'Tipo_Oferta': 'Exata' if oferta_cb['DT_REF'] == data else 'Data Proxima',
-                            'Diferença_Preço': f"{(preco_comparacao - preco_oferta_cb)/preco_oferta_cb:.2%}" if preco_oferta_cb != 0 else 'Div/Zero'
-                        })
+                            'Tipo_Oferta': 'Exata' if oferta_cb['DT_REF'] == data else 'Data Proxima'
+                        }
+                        
+                        # Adicionar preços de oferta conforme disponibilidade
+                        if tem_3_percent_cb:
+                            resultado_cb['Preço_Oferta_3%'] = preco_oferta_3
+                            resultado_cb['Preço_Oferta_2%'] = preco_oferta_2
+                            # Calcular diferença com base no preço de referência correto
+                            if comissao == 3:
+                                preco_referencia = preco_oferta_3
+                            elif comissao == 2:
+                                preco_referencia = preco_oferta_2
+                            else:
+                                preco_referencia = None
+                                
+                            if preco_referencia:
+                                resultado_cb['Diferença_Preço'] = f"{(preco_comparacao - preco_referencia)/preco_referencia:.2%}"
+                            else:
+                                resultado_cb['Diferença_Preço'] = 'N/A'
+                        else:
+                            resultado_cb['Preço_Oferta'] = preco_oferta_2
+                            resultado_cb['Diferença_Preço'] = f"{(preco_comparacao - preco_oferta_2)/preco_oferta_2:.2%}" if preco_oferta_2 != 0 else 'Div/Zero'
+                        
+                        resultados_ofertas_cb.append(resultado_cb)
                         continue  # Pula para o próximo registro, já encontrou em CB
         
                 # SEGUNDO: Se não encontrou em CB, verificar em VOG
@@ -586,7 +657,13 @@ def processar_planilhas():
                         if tem_2_percent:
                             resultado['Preço_Oferta_2%'] = preco_oferta_2
                             # Calcular diferença com base no preço de referência correto
-                            preco_referencia = preco_oferta_3 if comissao == 3 else (preco_oferta_2 if comissao == 2 else None)
+                            if comissao == 3:
+                                preco_referencia = preco_oferta_3
+                            elif comissao == 2:
+                                preco_referencia = preco_oferta_2
+                            else:
+                                preco_referencia = None
+                                
                             if preco_referencia:
                                 resultado['Diferença_Preço'] = f"{(preco_comparacao - preco_referencia)/preco_referencia:.2%}"
                             else:
@@ -622,6 +699,16 @@ def processar_planilhas():
         print(f"- Itens com oferta VOG encontrada: {len(resultados_ofertas_vog)}")
         print(f"- Itens sem oferta encontrada: {len(df_sem_oferta_final)}")
         print(f"- Erros durante o processamento: {len(df_logs_erros)}")
+        
+        # Exibir estatísticas das novas colunas
+        if '3%' in df_ofertas_cb.columns:
+            cb_com_3_percent = df_ofertas_cb['3%'].notna().sum()
+            cb_com_2_percent = df_ofertas_cb['2%'].notna().sum()
+            print(f"\nEstatísticas OFF_VOG_CB:")
+            print(f"  - Registros com coluna '3%': {cb_com_3_percent}")
+            print(f"  - Registros com coluna '2%': {cb_com_2_percent}")
+            print(f"  - Ofetas CB com 3 faixas (3%,2%,1%): {cb_com_3_percent}")
+            print(f"  - Ofetas CB com 2 faixas (2%,1%): {cb_com_2_percent - cb_com_3_percent}")
 
         # 5. Exportar para Excel
         print(f"\n8. SALVANDO RESULTADOS EM: {caminho_downloads}")
@@ -665,10 +752,23 @@ def processar_planilhas():
                         columns=['Comissao_Kg', 'Comissao_Esperada', 'Diferença_Preço', 'Status', 'Tipo_Oferta'], 
                         errors='ignore')
                     
-                    colunas_ordenadas = ['CF', 'RAZAO', 'GRUPO', 'NF-E', 'VENDEDOR', 'CODPRODUTO',
-                                       'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'Preço - 5%', 'DATA',
-                                       'P. Com', 'Preço_Oferta', 'Data_Oferta', 'Comissão_Correta', 'Tipo']
-                    df_ofertas_corretas = df_ofertas_corretas[colunas_ordenadas].rename(
+                    # Ajustar colunas baseado no que existe
+                    colunas_base = ['CF', 'RAZAO', 'GRUPO', 'NF-E', 'VENDEDOR', 'CODPRODUTO',
+                                   'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'Preço - 5%', 'DATA',
+                                   'P. Com', 'Data_Oferta', 'Comissão_Correta', 'Tipo']
+                    
+                    # Adicionar colunas específicas conforme disponíveis
+                    colunas_finais = colunas_base.copy()
+                    
+                    # Verificar quais colunas de preço de oferta existem
+                    if 'Preço_Oferta_3%' in df_ofertas_corretas.columns:
+                        colunas_finais.insert(12, 'Preço_Oferta_3%')
+                    if 'Preço_Oferta_2%' in df_ofertas_corretas.columns:
+                        colunas_finais.insert(13 if 'Preço_Oferta_3%' in colunas_finais else 12, 'Preço_Oferta_2%')
+                    if 'Preço_Oferta' in df_ofertas_corretas.columns:
+                        colunas_finais.insert(12, 'Preço_Oferta')
+                    
+                    df_ofertas_corretas = df_ofertas_corretas[colunas_finais].rename(
                         columns={'Comissão_Correta': 'O Com'})
                     
                     df_ofertas_corretas = df_ofertas_corretas.style.set_properties(**{'text-align': 'left'})
@@ -682,10 +782,23 @@ def processar_planilhas():
                         columns=['Comissao_Kg', 'Comissao_Esperada', 'Diferença_Preço', 'Status', 'Tipo_Oferta'], 
                         errors='ignore')
                     
-                    colunas_ordenadas = ['CF', 'RAZAO', 'GRUPO', 'NF-E', 'VENDEDOR', 'CODPRODUTO',
-                                       'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'Preço - 5%', 'DATA',
-                                       'P. Com', 'Preço_Oferta', 'Data_Oferta', 'Comissão_Correta', 'Tipo']
-                    df_ofertas_incorretas = df_ofertas_incorretas[colunas_ordenadas].rename(
+                    # Ajustar colunas baseado no que existe
+                    colunas_base = ['CF', 'RAZAO', 'GRUPO', 'NF-E', 'VENDEDOR', 'CODPRODUTO',
+                                   'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'Preço - 5%', 'DATA',
+                                   'P. Com', 'Data_Oferta', 'Comissão_Correta', 'Tipo']
+                    
+                    # Adicionar colunas específicas conforme disponíveis
+                    colunas_finais = colunas_base.copy()
+                    
+                    # Verificar quais colunas de preço de oferta existem
+                    if 'Preço_Oferta_3%' in df_ofertas_incorretas.columns:
+                        colunas_finais.insert(12, 'Preço_Oferta_3%')
+                    if 'Preço_Oferta_2%' in df_ofertas_incorretas.columns:
+                        colunas_finais.insert(13 if 'Preço_Oferta_3%' in colunas_finais else 12, 'Preço_Oferta_2%')
+                    if 'Preço_Oferta' in df_ofertas_incorretas.columns:
+                        colunas_finais.insert(12, 'Preço_Oferta')
+                    
+                    df_ofertas_incorretas = df_ofertas_incorretas[colunas_finais].rename(
                         columns={'Comissão_Correta': 'O Com'})
                     
                     df_ofertas_incorretas = df_ofertas_incorretas.style.set_properties(**{'text-align': 'left'})
