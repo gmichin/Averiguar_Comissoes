@@ -2,6 +2,7 @@ import pandas as pd
 from datetime import datetime
 import os
 import numpy as np
+from openpyxl.styles import numbers
 
 def encontrar_oferta_mais_proxima(df_ofertas, codproduto, data_venda):
     try:
@@ -267,18 +268,18 @@ def aplicar_regras_comissao_fixa(row, regras):
     is_devolucao = str(row['CF']).startswith('DEV')
 
     if nfe == '111880' and codproduto == 1950:
-        return _ajustar_para_devolucao(1, is_devolucao)
+        return _ajustar_para_devolucao(0.01, is_devolucao)  # Alterado para 1% como decimal
 
     # --- NOVA REGRA: POR PRODUTO ---
     if codproduto == 1807 or codproduto == 947 or codproduto == 1914 or codproduto == 2000:
-        return _ajustar_para_devolucao(1, is_devolucao)
+        return _ajustar_para_devolucao(0.01, is_devolucao)  # Alterado para 1% como decimal
     
     if vendedor == "PROPRIO":
-        return _ajustar_para_devolucao(0, is_devolucao)
+        return _ajustar_para_devolucao(0.00, is_devolucao)  # Alterado para 0% como decimal
     
     # --- NOVA REGRA: TODOS OS ITENS DA REDE RICOY = 0% ---
     if grupo == 'REDE RICOY':
-        return _ajustar_para_devolucao(0, is_devolucao)
+        return _ajustar_para_devolucao(0.00, is_devolucao)  # Alterado para 0% como decimal
     
     # --- REGRA ESPECÍFICA PARA REDE ROLDAO ---
     if grupo == 'REDE ROLDAO':
@@ -290,9 +291,9 @@ def aplicar_regras_comissao_fixa(row, regras):
         ]
         
         if grupo_produto in grupos_2_percent:
-            return _ajustar_para_devolucao(2, is_devolucao)
+            return _ajustar_para_devolucao(0.02, is_devolucao)  # Alterado para 2% como decimal
         else:
-            return _ajustar_para_devolucao(0, is_devolucao)
+            return _ajustar_para_devolucao(0.00, is_devolucao)  # Alterado para 0% como decimal
 
     # --- NOVA REGRA PARA CALVO - deve ser processada por ofertas ---
     if grupo == 'VAREJO CALVO':
@@ -301,59 +302,59 @@ def aplicar_regras_comissao_fixa(row, regras):
             return None  # Retorna None para que seja processado por ofertas
         
         # Todo o resto do CALVO é 3%
-        return _ajustar_para_devolucao(3, is_devolucao)
+        return _ajustar_para_devolucao(0.03, is_devolucao)  # Alterado para 3% como decimal
     
     if 'REDE CENCOSUD' in grupo:
         if 'SALAME UAI' in grupo_produto:
-            return _ajustar_para_devolucao(1, is_devolucao)
-        return _ajustar_para_devolucao(3, is_devolucao)
+            return _ajustar_para_devolucao(0.01, is_devolucao)  # Alterado para 1% como decimal
+        return _ajustar_para_devolucao(0.03, is_devolucao)  # Alterado para 3% como decimal
     
     # --- REGRAS ESPECÍFICAS POR GRUPO (COM ORDEM DE PRIORIDADE) ---
     if grupo == 'REDE ROSSI':
         # PRIMEIRO verifica a regra de TORRESMO (3%) - APENAS POR CÓDIGOS
         if codproduto in [937, 1698, 1701, 1587, 1700, 1586, 1699, 943, 1735, 1624, 1134]:
-            return _ajustar_para_devolucao(3, is_devolucao)
+            return _ajustar_para_devolucao(0.03, is_devolucao)  # Alterado para 3% como decimal
         
         # SEGUNDO verifica a regra de 0% 
         if codproduto == 1139:
-            return _ajustar_para_devolucao(0, is_devolucao)
+            return _ajustar_para_devolucao(0.00, is_devolucao)  # Alterado para 0% como decimal
         
         if grupo_produto in ['EMBUTIDOS', 'EMBUTIDOS NOBRE', 'EMBUTIDOS SADIA', 
                            'EMBUTIDOS PERDIGAO', 'EMBUTIDOS AURORA', 'EMBUTIDOS SEARA', 
                            'SALAME UAI']:
-            return _ajustar_para_devolucao(0, is_devolucao)
+            return _ajustar_para_devolucao(0.00, is_devolucao)  # Alterado para 0% como decimal
         
         # TERCEIRO verifica a regra de 2%
         if grupo_produto in ["MIUDOS BOVINOS", "SUINOS", "SALGADOS SUINOS A GRANEL", 
                              "SALGADOS SUINOS EMBALADOS", "CORTES DE FRANGO"]:
-            return _ajustar_para_devolucao(2, is_devolucao)
+            return _ajustar_para_devolucao(0.02, is_devolucao)  # Alterado para 2% como decimal
         
         if codproduto == 700:
-            return _ajustar_para_devolucao(2, is_devolucao)
+            return _ajustar_para_devolucao(0.02, is_devolucao)  # Alterado para 2% como decimal
         
         # QUARTO verifica a regra de 1%
         if codproduto in [1265, 1266, 812, 1115, 798, 1211]:
-            return _ajustar_para_devolucao(1, is_devolucao)
+            return _ajustar_para_devolucao(0.01, is_devolucao)  # Alterado para 1% como decimal
     
     if grupo == 'REDE PLUS':
         if grupo_produto in ['TEMPERADOS']:
-            return _ajustar_para_devolucao(3, is_devolucao)
+            return _ajustar_para_devolucao(0.03, is_devolucao)  # Alterado para 3% como decimal
         
         if codproduto == 812:
-            return _ajustar_para_devolucao(3, is_devolucao)
+            return _ajustar_para_devolucao(0.03, is_devolucao)  # Alterado para 3% como decimal
     
     # 2. Verifica outras regras específicas por grupo
     if grupo in regras['grupos_especificos']:
         regras_grupo = regras['grupos_especificos'][grupo]
         
         # Verificar primeiro as regras mais específicas (0%, depois 2%, etc.)
-        for porcentagem in [0.00, 0.02, 0.01, 0.03]:  # Ordem de prioridade (agora como floats)
+        for porcentagem in [0.00, 0.02, 0.01, 0.03]:  # Manter como floats
             if porcentagem in regras_grupo:
                 condicoes = regras_grupo[porcentagem]
                 
                 if isinstance(condicoes, list):
                     if codproduto in condicoes:
-                        return _ajustar_para_devolucao(int(porcentagem * 100), is_devolucao)
+                        return _ajustar_para_devolucao(porcentagem, is_devolucao)
                 
                 elif isinstance(condicoes, dict):
                     match = True
@@ -367,27 +368,78 @@ def aplicar_regras_comissao_fixa(row, regras):
                             match = False
                     
                     if match:
-                        return _ajustar_para_devolucao(int(porcentagem * 100), is_devolucao)
+                        return _ajustar_para_devolucao(porcentagem, is_devolucao)
     
     # 3. Verifica regras gerais
     for porcentagem, condicoes in regras['geral'].items():
-        porcentagem_num = int(porcentagem * 100)  # Agora converte de float para int
         
         if 'grupos' in condicoes:
             if grupo in condicoes['grupos']:
-                return _ajustar_para_devolucao(porcentagem_num, is_devolucao)
+                return _ajustar_para_devolucao(porcentagem, is_devolucao)
         
         if 'razoes' in condicoes:
             if razao in condicoes['razoes']:
-                return _ajustar_para_devolucao(porcentagem_num, is_devolucao)
+                return _ajustar_para_devolucao(porcentagem, is_devolucao)
     
     return None
 
 def _ajustar_para_devolucao(valor, is_devolucao):
     return valor if not is_devolucao else -valor
 
+def _converter_para_decimal_percentual(valor):
+    """
+    Converte um valor para decimal de porcentagem.
+    Pode lidar com strings com vírgula ou ponto decimal.
+    """
+    try:
+        if pd.isna(valor):
+            return None
+        
+        # Se for string, substituir vírgula por ponto
+        if isinstance(valor, str):
+            valor = valor.replace(',', '.').replace('%', '').strip()
+        
+        # Converter para float
+        valor_float = float(valor)
+        
+        # Se o valor for maior que 1, provavelmente está em formato decimal
+        # (ex: 1.11 significa 1.11% = 0.0111)
+        if valor_float > 1:
+            return valor_float / 100.0
+        else:
+            return valor_float
+            
+    except Exception as e:
+        print(f"Erro ao converter valor '{valor}': {str(e)}")
+        return None
+
+def _comparar_comissoes(comissao_atual, comissao_esperada, decimal_places=4):
+    """
+    Compara duas comissões arredondando para N casas decimais
+    Retorna True se forem iguais após o arredondamento
+    """
+    try:
+        # Converter ambos os valores para decimal percentual
+        atual = _converter_para_decimal_percentual(comissao_atual)
+        esperada = _converter_para_decimal_percentual(comissao_esperada)
+        
+        if atual is None or esperada is None:
+            return False
+        
+        # Arredondar para o número especificado de casas decimais
+        atual_rounded = round(atual, decimal_places)
+        esperada_rounded = round(esperada, decimal_places)
+        
+        # Debug: mostrar comparações se necessário
+        # print(f"DEBUG: atual={atual}, esperada={esperada}, arred_atual={atual_rounded}, arred_esperada={esperada_rounded}, iguais={atual_rounded == esperada_rounded}")
+        
+        return atual_rounded == esperada_rounded
+    except (ValueError, TypeError) as e:
+        print(f"Erro na comparação: {str(e)}, atual={comissao_atual}, esperada={comissao_esperada}")
+        return False
+
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\MRG_251204 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\OneDrive\Documentos\Margens de fechamento\MRG_251130 - Fechamento.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
@@ -404,8 +456,15 @@ def processar_planilhas():
         # Converter e formatar dados
         df_base['DATA'] = pd.to_datetime(df_base['DATA']).dt.date
         df_base['CODPRODUTO'] = pd.to_numeric(df_base['CODPRODUTO'], errors='coerce').fillna(0).astype('int64')
-        df_base['P. Com'] = (pd.to_numeric(df_base['P. Com'], errors='coerce') * 100).round().astype('Int64')
-        df_base['Preço_Venda'] = pd.to_numeric(df_base['Preço_Venda'], errors='coerce')
+        
+        # REMOVER CONVERSÃO PARA INTEIRO - manter como float
+        # IMPORTANTE: Converter vírgula para ponto decimal
+        df_base['P. Com'] = df_base['P. Com'].apply(
+            lambda x: float(str(x).replace(',', '.')) if isinstance(x, str) else float(x)
+        )
+        df_base['Preço_Venda'] = df_base['Preço_Venda'].apply(
+            lambda x: float(str(x).replace(',', '.')) if isinstance(x, str) else float(x)
+        )
         
         # Ler as duas abas de ofertas
         # AGORA LER A NOVA COLUNA "2%" NA ABA OFF_VOG
@@ -417,10 +476,16 @@ def processar_planilhas():
         df_ofertas_vog = df_ofertas_vog[colunas_ofertas_vog].dropna(subset=['COD', 'Data'])
         df_ofertas_vog['Data'] = pd.to_datetime(df_ofertas_vog['Data']).dt.date
         df_ofertas_vog['COD'] = pd.to_numeric(df_ofertas_vog['COD'], errors='coerce').fillna(0).astype('int64')
-        df_ofertas_vog['3%'] = pd.to_numeric(df_ofertas_vog['3%'], errors='coerce')
+        
+        # Converter vírgula para ponto decimal nas ofertas
+        df_ofertas_vog['3%'] = df_ofertas_vog['3%'].apply(
+            lambda x: float(str(x).replace(',', '.')) if isinstance(x, str) else float(x)
+        )
         # Se existir a coluna '2%', converte para numérico
         if '2%' in df_ofertas_vog.columns:
-            df_ofertas_vog['2%'] = pd.to_numeric(df_ofertas_vog['2%'], errors='coerce')
+            df_ofertas_vog['2%'] = df_ofertas_vog['2%'].apply(
+                lambda x: float(str(x).replace(',', '.')) if isinstance(x, str) else float(x)
+            )
         print(f"- Total de OFERTAS_VOG cadastradas: {len(df_ofertas_vog)}")
         
         # AGORA LER A NOVA COLUNA "3%" NA ABA OFF_VOG_CB (entre 'DS_PROD' e '2%')
@@ -434,11 +499,20 @@ def processar_planilhas():
         df_ofertas_cb = df_ofertas_cb[colunas_ofertas_cb].dropna(subset=['CD_PROD', 'DT_REF'])
         df_ofertas_cb['DT_REF'] = pd.to_datetime(df_ofertas_cb['DT_REF']).dt.date
         df_ofertas_cb['CD_PROD'] = pd.to_numeric(df_ofertas_cb['CD_PROD'], errors='coerce').fillna(0).astype('int64')
-        df_ofertas_cb['2%'] = pd.to_numeric(df_ofertas_cb['2%'], errors='coerce')
+        
+        # Converter vírgula para ponto decimal nas ofertas CB
+        df_ofertas_cb['2%'] = df_ofertas_cb['2%'].apply(
+            lambda x: float(str(x).replace(',', '.')) if isinstance(x, str) else float(x)
+        )
+        df_ofertas_cb['1%'] = df_ofertas_cb['1%'].apply(
+            lambda x: float(str(x).replace(',', '.')) if isinstance(x, str) else float(x)
+        )
         
         # Se existir a coluna '3%', converter para numérico
         if '3%' in df_ofertas_cb.columns:
-            df_ofertas_cb['3%'] = pd.to_numeric(df_ofertas_cb['3%'], errors='coerce')
+            df_ofertas_cb['3%'] = df_ofertas_cb['3%'].apply(
+                lambda x: float(str(x).replace(',', '.')) if isinstance(x, str) else float(x)
+            )
         
         print(f"- Total de OFERTAS_CB cadastradas: {len(df_ofertas_cb)}")
         if '3%' in df_ofertas_cb.columns:
@@ -464,9 +538,10 @@ def processar_planilhas():
         df_regras = df_sem_kg[mask_regras].copy()
         df_sem_regra = df_sem_kg[~mask_regras].copy()
         
-        # Verificar se a comissão aplicada está correta
+        # Verificar se a comissão aplicada está correta usando arredondamento de 2 casas
         df_regras['Status'] = df_regras.apply(
-            lambda row: 'Correto' if row['P. Com'] == row['Comissao_Esperada'] else 'Incorreto', axis=1)
+            lambda row: 'Correto' if _comparar_comissoes(row['P. Com'], row['Comissao_Esperada'], 4) else 'Incorreto', 
+            axis=1)
         
         df_regras_corretas = df_regras[df_regras['Status'] == 'Correto']
         df_regras_incorretas = df_regras[df_regras['Status'] == 'Incorreto']
@@ -522,11 +597,11 @@ def processar_planilhas():
                             
                             # Lógica de classificação para CB com 3 faixas
                             if preco_comparacao >= preco_oferta_3_cb:
-                                comissao = 3
+                                comissao = 0.03  # Alterado para 3% como decimal
                             elif preco_comparacao >= preco_oferta_2_cb:
-                                comissao = 2
+                                comissao = 0.02  # Alterado para 2% como decimal
                             else:
-                                comissao = 1
+                                comissao = 0.01  # Alterado para 1% como decimal
                                 
                             preco_oferta_2 = preco_oferta_2_cb
                             preco_oferta_3 = preco_oferta_3_cb
@@ -548,16 +623,16 @@ def processar_planilhas():
                             
                             # Lógica de classificação para CB: 2% se >=, 1% se <
                             if preco_comparacao >= preco_oferta_2_cb:
-                                comissao = 2
+                                comissao = 0.02  # Alterado para 2% como decimal
                             else:
-                                comissao = 1
+                                comissao = 0.01  # Alterado para 1% como decimal
                                 
                             preco_oferta_2 = preco_oferta_2_cb
                             preco_oferta_3 = None
                             tem_2_percent = False
             
                         if is_devolucao:
-                            comissao *= -1
+                            comissao *= -1  # Mantém como decimal negativo
             
                         # Adicionar o preço -5% apenas para os grupos especiais
                         preco_menos_5 = preco * 0.95 if grupo in grupos_especiais else None
@@ -568,7 +643,7 @@ def processar_planilhas():
                             'Preço - 5%': preco_menos_5,
                             'Data_Oferta': oferta_cb['DT_REF'],
                             'Comissão_Correta': comissao,
-                            'Status': 'Correto' if row['P. Com'] == comissao else 'Incorreto',
+                            'Status': 'Correto' if _comparar_comissoes(row['P. Com'], comissao, 4) else 'Incorreto',
                             'Tipo': 'CB',
                             'Tipo_Oferta': 'Exata' if oferta_cb['DT_REF'] == data else 'Data Proxima'
                         }
@@ -578,9 +653,9 @@ def processar_planilhas():
                             resultado_cb['Preço_Oferta_3%'] = preco_oferta_3
                             resultado_cb['Preço_Oferta_2%'] = preco_oferta_2
                             # Calcular diferença com base no preço de referência correto
-                            if comissao == 3:
+                            if comissao == 0.03:
                                 preco_referencia = preco_oferta_3
-                            elif comissao == 2:
+                            elif comissao == 0.02:
                                 preco_referencia = preco_oferta_2
                             else:
                                 preco_referencia = None
@@ -623,20 +698,20 @@ def processar_planilhas():
                         if tem_2_percent:
                             # Com três faixas (3%, 2%, 1%)
                             if preco_comparacao >= preco_oferta_3:
-                                comissao = 3
+                                comissao = 0.03  # Alterado para 3% como decimal
                             elif preco_comparacao >= preco_oferta_2:
-                                comissao = 2
+                                comissao = 0.02  # Alterado para 2% como decimal
                             else:
-                                comissao = 1
+                                comissao = 0.01  # Alterado para 1% como decimal
                         else:
                             # Com apenas duas faixas (3%, 1%) - lógica anterior
                             if preco_comparacao >= preco_oferta_3:
-                                comissao = 3
+                                comissao = 0.03  # Alterado para 3% como decimal
                             else:
-                                comissao = 1
+                                comissao = 0.01  # Alterado para 1% como decimal
             
                         if is_devolucao:
-                            comissao *= -1
+                            comissao *= -1  # Mantém como decimal negativo
             
                         # Adicionar o preço -5% apenas para os grupos especiais
                         preco_menos_5 = preco * 0.95 if grupo in grupos_especiais else None
@@ -648,7 +723,7 @@ def processar_planilhas():
                             'Preço - 5%': preco_menos_5,
                             'Data_Oferta': oferta_vog['Data'],
                             'Comissão_Correta': comissao,
-                            'Status': 'Correto' if row['P. Com'] == comissao else 'Incorreto',
+                            'Status': 'Correto' if _comparar_comissoes(row['P. Com'], comissao, 4) else 'Incorreto',
                             'Tipo': 'VOG',
                             'Tipo_Oferta': 'Exata' if oferta_vog['Data'] == data else 'Data Proxima'
                         }
@@ -657,9 +732,9 @@ def processar_planilhas():
                         if tem_2_percent:
                             resultado['Preço_Oferta_2%'] = preco_oferta_2
                             # Calcular diferença com base no preço de referência correto
-                            if comissao == 3:
+                            if comissao == 0.03:
                                 preco_referencia = preco_oferta_3
-                            elif comissao == 2:
+                            elif comissao == 0.02:
                                 preco_referencia = preco_oferta_2
                             else:
                                 preco_referencia = None
@@ -723,12 +798,11 @@ def processar_planilhas():
                 df_regras_corretas = df_regras_corretas.drop(
                     columns=['Comissao_Kg', 'Status'], errors='ignore')
                 
-                colunas_ordenadas = ['RAZAO', 'GRUPO', 'NF-E', 'DATA', 'VENDEDOR', 'CODPRODUTO',
+                colunas_ordenadas = ['CF', 'RAZAO', 'GRUPO', 'NF-E', 'DATA', 'VENDEDOR', 'CODPRODUTO',
                                     'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'P. Com', 'Comissao_Esperada']
                 df_regras_corretas = df_regras_corretas[colunas_ordenadas].rename(
                     columns={'Comissao_Esperada': 'O Com'})
                 
-                df_regras_corretas = df_regras_corretas.style.set_properties(**{'text-align': 'left'})
                 df_regras_corretas.to_excel(writer, sheet_name='O Regras', index=False)
 
             # 3. Regras Incorretas
@@ -736,12 +810,11 @@ def processar_planilhas():
                 df_regras_incorretas = df_regras_incorretas.drop(
                     columns=['Comissao_Kg', 'Status'], errors='ignore')
                 
-                colunas_ordenadas = ['RAZAO', 'GRUPO', 'NF-E', 'DATA', 'VENDEDOR', 'CODPRODUTO',
+                colunas_ordenadas = ['CF', 'RAZAO', 'GRUPO', 'NF-E', 'DATA', 'VENDEDOR', 'CODPRODUTO',
                                     'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'P. Com', 'Comissao_Esperada']
                 df_regras_incorretas = df_regras_incorretas[colunas_ordenadas].rename(
                     columns={'Comissao_Esperada': 'O Com'})
                 
-                df_regras_incorretas = df_regras_incorretas.style.set_properties(**{'text-align': 'left'})
                 df_regras_incorretas.to_excel(writer, sheet_name='X Regras', index=False)
 
             # 4. Ofertas Corretas
@@ -771,7 +844,6 @@ def processar_planilhas():
                     df_ofertas_corretas = df_ofertas_corretas[colunas_finais].rename(
                         columns={'Comissão_Correta': 'O Com'})
                     
-                    df_ofertas_corretas = df_ofertas_corretas.style.set_properties(**{'text-align': 'left'})
                     df_ofertas_corretas.to_excel(writer, sheet_name='O Ofertas', index=False)
 
             # 5. Ofertas Incorretas
@@ -801,7 +873,6 @@ def processar_planilhas():
                     df_ofertas_incorretas = df_ofertas_incorretas[colunas_finais].rename(
                         columns={'Comissão_Correta': 'O Com'})
                     
-                    df_ofertas_incorretas = df_ofertas_incorretas.style.set_properties(**{'text-align': 'left'})
                     df_ofertas_incorretas.to_excel(writer, sheet_name='X Ofertas', index=False)
 
             # 6. Sem Oferta
@@ -810,13 +881,28 @@ def processar_planilhas():
                     columns=['Comissao_Kg', 'Comissao_Esperada'], 
                     errors='ignore')
                 
-                df_sem_oferta_final = df_sem_oferta_final.style.set_properties(**{'text-align': 'left'})
                 df_sem_oferta_final.to_excel(writer, sheet_name='Sem Oferta', index=False)
 
             # 7. Logs de erros
             if not df_logs_erros.empty:
-                df_logs_erros = df_logs_erros.style.set_properties(**{'text-align': 'left'})
                 df_logs_erros.to_excel(writer, sheet_name='Logs Erros', index=False)
+                
+            # Aplicar formatação de porcentagem com 2 decimais às colunas de comissão
+            workbook = writer.book
+            
+            # Para cada planilha, aplicar formatação às colunas de comissão
+            for sheet_name in writer.sheets:
+                worksheet = writer.sheets[sheet_name]
+                
+                # Encontrar índices das colunas que contêm "Com" (comissão)
+                for col_idx, col_name in enumerate(next(worksheet.iter_rows(min_row=1, max_row=1, values_only=True))):
+                    col_str = str(col_name)
+                    if any(keyword in col_str for keyword in ['P. Com', 'O Com', 'Comissão_Correta', 'Comissao_Esperada']):
+                        # Aplicar formatação de porcentagem a partir da linha 2
+                        for row in worksheet.iter_rows(min_row=2, min_col=col_idx+1, max_col=col_idx+1):
+                            for cell in row:
+                                # Formatar como porcentagem com 2 decimais
+                                cell.number_format = '0.00%'
 
         print("\n=== PROCESSAMENTO CONCLUÍDO COM SUCESSO ===")
         
