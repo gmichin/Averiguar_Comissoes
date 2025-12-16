@@ -267,8 +267,14 @@ def aplicar_regras_comissao_fixa(row, regras):
     nfe = str(row['NF-E']).strip()
     is_devolucao = str(row['CF']).startswith('DEV')
 
-    if nfe == '111880' and codproduto == 1950:
-        return _ajustar_para_devolucao(0.01, is_devolucao)  # Alterado para 1% como decimal
+    if nfe == '117144' and codproduto == 1451:
+        return _ajustar_para_devolucao(0.03, is_devolucao) 
+    if nfe == '116086' and codproduto == 2003:
+        return _ajustar_para_devolucao(0.01, is_devolucao) 
+    if nfe == '116305' and codproduto == 1477:
+        return _ajustar_para_devolucao(0.03, is_devolucao) 
+    if nfe == '116891' and codproduto == 2010:
+        return _ajustar_para_devolucao(0.01, is_devolucao) 
 
     # --- NOVA REGRA: POR PRODUTO ---
     if codproduto == 1807 or codproduto == 947 or codproduto == 1914 or codproduto == 2000:
