@@ -17,16 +17,16 @@ def encontrar_oferta_mais_proxima(df_ofertas, codproduto, data_venda):
             return None
             
         # Converter datas e ordenar
-        ofertas_cod['Data'] = pd.to_datetime(ofertas_cod['Data']).dt.date
-        ofertas_cod = ofertas_cod.sort_values('Data', ascending=False)
+        ofertas_cod['DT_REF_OFF'] = pd.to_datetime(ofertas_cod['DT_REF_OFF']).dt.date
+        ofertas_cod = ofertas_cod.sort_values('DT_REF_OFF', ascending=False)
         
         # 1. Buscar oferta na data exata
-        oferta_exata = ofertas_cod[ofertas_cod['Data'] == data]
+        oferta_exata = ofertas_cod[ofertas_cod['DT_REF_OFF'] == data]
         if not oferta_exata.empty:
             return oferta_exata.iloc[0]
         
         # 2. Buscar a oferta mais recente anterior
-        ofertas_anteriores = ofertas_cod[ofertas_cod['Data'] < data]
+        ofertas_anteriores = ofertas_cod[ofertas_cod['DT_REF_OFF'] < data]
         if not ofertas_anteriores.empty:
             return ofertas_anteriores.iloc[0]  # Já está ordenado
         
@@ -49,16 +49,16 @@ def encontrar_oferta_cb_mais_proxima(df_ofertas_cb, codproduto, data_venda):
             return None
             
         # Converter datas e ordenar
-        ofertas_cod['DT_REF'] = pd.to_datetime(ofertas_cod['DT_REF']).dt.date
-        ofertas_cod = ofertas_cod.sort_values('DT_REF', ascending=False)
+        ofertas_cod['DT_REF_OFF_CB'] = pd.to_datetime(ofertas_cod['DT_REF_OFF_CB']).dt.date
+        ofertas_cod = ofertas_cod.sort_values('DT_REF_OFF_CB', ascending=False)
         
         # 1. Buscar oferta na data exata
-        oferta_exata = ofertas_cod[ofertas_cod['DT_REF'] == data]
+        oferta_exata = ofertas_cod[ofertas_cod['DT_REF_OFF_CB'] == data]
         if not oferta_exata.empty:
             return oferta_exata.iloc[0]
         
         # 2. Buscar a oferta mais recente anterior
-        ofertas_anteriores = ofertas_cod[ofertas_cod['DT_REF'] < data]
+        ofertas_anteriores = ofertas_cod[ofertas_cod['DT_REF_OFF_CB'] < data]
         if not ofertas_anteriores.empty:
             return ofertas_anteriores.iloc[0]  # Já está ordenado
         
@@ -475,7 +475,7 @@ def _converter_valor_oferta(valor):
         return np.nan
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\MRG_251215 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\MRG_251216 - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
@@ -502,57 +502,109 @@ def processar_planilhas():
             lambda x: _converter_valor_oferta(x) if pd.notna(x) else np.nan
         )
         
-        # Ler as duas abas de ofertas
-        # AGORA LER A NOVA COLUNA "2%" NA ABA OFF_VOG
+        # Ler as duas abas de ofertas com os NOVOS CAMPOS
+        # OFF_VOG agora tem DT_REF_OFF ao invés de Data
         df_ofertas_vog = pd.read_excel(caminho_origem, sheet_name='OFF_VOG')
-        # Verifica se a coluna '2%' existe, se não existir, cria uma coluna vazia
-        colunas_ofertas_vog = ['COD', 'ITENS', '3%', 'Data']
-        if '2%' in df_ofertas_vog.columns:
-            colunas_ofertas_vog.insert(2, '2%')  # Insere '2%' entre 'ITENS' e '3%'
-        df_ofertas_vog = df_ofertas_vog[colunas_ofertas_vog].dropna(subset=['COD', 'Data'])
-        df_ofertas_vog['Data'] = pd.to_datetime(df_ofertas_vog['Data']).dt.date
+        
+        # Verificar quais colunas existem no arquivo
+        colunas_vog_disponiveis = df_ofertas_vog.columns.tolist()
+        print(f"Colunas disponíveis em OFF_VOG: {colunas_vog_disponiveis}")
+        
+        # Construir lista de colunas baseada no que existe
+        colunas_ofertas_vog = []
+        if 'COD' in colunas_vog_disponiveis:
+            colunas_ofertas_vog.append('COD')
+        if 'ITENS' in colunas_vog_disponiveis:
+            colunas_ofertas_vog.append('ITENS')
+        if '3%' in colunas_vog_disponiveis:
+            colunas_ofertas_vog.append('3%')
+        if '2%' in colunas_vog_disponiveis:
+            colunas_ofertas_vog.append('2%')
+        
+        # Verificar se existe DT_REF_OFF ou Data
+        if 'DT_REF_OFF' in colunas_vog_disponiveis:
+            colunas_ofertas_vog.append('DT_REF_OFF')
+        elif 'Data' in colunas_vog_disponiveis:
+            colunas_ofertas_vog.append('Data')
+            # Renomear para DT_REF_OFF para padronizar
+            df_ofertas_vog = df_ofertas_vog.rename(columns={'Data': 'DT_REF_OFF'})
+        else:
+            raise ValueError("Não encontrada coluna de data em OFF_VOG (nem DT_REF_OFF nem Data)")
+        
+        df_ofertas_vog = df_ofertas_vog[colunas_ofertas_vog].dropna(subset=['COD', 'DT_REF_OFF'])
+        df_ofertas_vog['DT_REF_OFF'] = pd.to_datetime(df_ofertas_vog['DT_REF_OFF']).dt.date
         df_ofertas_vog['COD'] = pd.to_numeric(df_ofertas_vog['COD'], errors='coerce').fillna(0).astype('int64')
         
         # Converter vírgula para ponto decimal nas ofertas usando a função corrigida
-        df_ofertas_vog['3%'] = df_ofertas_vog['3%'].apply(
-            lambda x: _converter_valor_oferta(x) if pd.notna(x) else np.nan
-        )
-        # Se existir a coluna '2%', converte para numérico
-        if '2%' in df_ofertas_vog.columns:
+        if '3%' in colunas_ofertas_vog:
+            df_ofertas_vog['3%'] = df_ofertas_vog['3%'].apply(
+                lambda x: _converter_valor_oferta(x) if pd.notna(x) else np.nan
+            )
+        if '2%' in colunas_ofertas_vog:
             df_ofertas_vog['2%'] = df_ofertas_vog['2%'].apply(
                 lambda x: _converter_valor_oferta(x) if pd.notna(x) else np.nan
             )
+        
         print(f"- Total de OFERTAS_VOG cadastradas: {len(df_ofertas_vog)}")
+        print(f"- Colunas em OFF_VOG: {colunas_ofertas_vog}")
         
-        # AGORA LER A NOVA COLUNA "3%" NA ABA OFF_VOG_CB (entre 'DS_PROD' e '2%')
+        # Ler OFF_VOG_CB agora com DT_REF_OFF_CB ao invés de DT_REF
         df_ofertas_cb = pd.read_excel(caminho_origem, sheet_name='OFF_VOG_CB')
-        # Verificar se a coluna '3%' existe
-        colunas_ofertas_cb = ['CD_PROD', 'GP_PROD', 'DS_PROD', '2%', '1%', 'DT_REF', 'QTDE_VENDAS', 'PK_OFF_CB']
-        if '3%' in df_ofertas_cb.columns:
-            # Inserir '3%' entre 'DS_PROD' e '2%'
-            colunas_ofertas_cb = ['CD_PROD', 'GP_PROD', 'DS_PROD', '3%', '2%', '1%', 'DT_REF', 'QTDE_VENDAS', 'PK_OFF_CB']
         
-        df_ofertas_cb = df_ofertas_cb[colunas_ofertas_cb].dropna(subset=['CD_PROD', 'DT_REF'])
-        df_ofertas_cb['DT_REF'] = pd.to_datetime(df_ofertas_cb['DT_REF']).dt.date
+        # Verificar quais colunas existem no arquivo
+        colunas_cb_disponiveis = df_ofertas_cb.columns.tolist()
+        print(f"Colunas disponíveis em OFF_VOG_CB: {colunas_cb_disponiveis}")
+        
+        # Construir lista de colunas baseada no que existe
+        colunas_ofertas_cb = []
+        if 'CD_PROD' in colunas_cb_disponiveis:
+            colunas_ofertas_cb.append('CD_PROD')
+        if 'GP_PROD' in colunas_cb_disponiveis:
+            colunas_ofertas_cb.append('GP_PROD')
+        if 'DS_PROD' in colunas_cb_disponiveis:
+            colunas_ofertas_cb.append('DS_PROD')
+        if '3%' in colunas_cb_disponiveis:
+            colunas_ofertas_cb.append('3%')
+        if '2%' in colunas_cb_disponiveis:
+            colunas_ofertas_cb.append('2%')
+        if '1%' in colunas_cb_disponiveis:
+            colunas_ofertas_cb.append('1%')
+        
+        # Verificar se existe DT_REF_OFF_CB ou DT_REF
+        if 'DT_REF_OFF_CB' in colunas_cb_disponiveis:
+            colunas_ofertas_cb.append('DT_REF_OFF_CB')
+        elif 'DT_REF' in colunas_cb_disponiveis:
+            colunas_ofertas_cb.append('DT_REF')
+            # Renomear para DT_REF_OFF_CB para padronizar
+            df_ofertas_cb = df_ofertas_cb.rename(columns={'DT_REF': 'DT_REF_OFF_CB'})
+        else:
+            raise ValueError("Não encontrada coluna de data em OFF_VOG_CB (nem DT_REF_OFF_CB nem DT_REF)")
+        
+        if 'QTDE_VENDAS' in colunas_cb_disponiveis:
+            colunas_ofertas_cb.append('QTDE_VENDAS')
+        if 'PK_OFF_CB' in colunas_cb_disponiveis:
+            colunas_ofertas_cb.append('PK_OFF_CB')
+        
+        df_ofertas_cb = df_ofertas_cb[colunas_ofertas_cb].dropna(subset=['CD_PROD', 'DT_REF_OFF_CB'])
+        df_ofertas_cb['DT_REF_OFF_CB'] = pd.to_datetime(df_ofertas_cb['DT_REF_OFF_CB']).dt.date
         df_ofertas_cb['CD_PROD'] = pd.to_numeric(df_ofertas_cb['CD_PROD'], errors='coerce').fillna(0).astype('int64')
         
         # Converter vírgula para ponto decimal nas ofertas CB usando a função corrigida
-        df_ofertas_cb['2%'] = df_ofertas_cb['2%'].apply(
-            lambda x: _converter_valor_oferta(x) if pd.notna(x) else np.nan
-        )
-        df_ofertas_cb['1%'] = df_ofertas_cb['1%'].apply(
-            lambda x: _converter_valor_oferta(x) if pd.notna(x) else np.nan
-        )
-        
-        # Se existir a coluna '3%', converter para numérico
-        if '3%' in df_ofertas_cb.columns:
+        if '3%' in colunas_ofertas_cb:
             df_ofertas_cb['3%'] = df_ofertas_cb['3%'].apply(
+                lambda x: _converter_valor_oferta(x) if pd.notna(x) else np.nan
+            )
+        if '2%' in colunas_ofertas_cb:
+            df_ofertas_cb['2%'] = df_ofertas_cb['2%'].apply(
+                lambda x: _converter_valor_oferta(x) if pd.notna(x) else np.nan
+            )
+        if '1%' in colunas_ofertas_cb:
+            df_ofertas_cb['1%'] = df_ofertas_cb['1%'].apply(
                 lambda x: _converter_valor_oferta(x) if pd.notna(x) else np.nan
             )
         
         print(f"- Total de OFERTAS_CB cadastradas: {len(df_ofertas_cb)}")
-        if '3%' in df_ofertas_cb.columns:
-            print(f"- Coluna '3%' encontrada em OFF_VOG_CB: {df_ofertas_cb['3%'].notna().sum()} registros com valores")
+        print(f"- Colunas em OFF_VOG_CB: {colunas_ofertas_cb}")
         
         # 2. Aplicar regras de comissão por kg (primeiro filtro)
         regras_comissao_kg = criar_regras_comissao_kg()
@@ -586,7 +638,7 @@ def processar_planilhas():
         print(f"  → Corretos: {len(df_regras_corretas)}")
         print(f"  → Incorretos: {len(df_regras_incorretas)}")
         
-         # 4. Verificação das ofertas - PRIMEIRO CB, DEPOIS VOG
+        # 4. Verificação das ofertas - PRIMEIRO CB, DEPOIS VOG
         resultados_ofertas_cb = []
         resultados_ofertas_vog = []
         registros_sem_oferta = []
@@ -614,12 +666,12 @@ def processar_planilhas():
                     if oferta_cb is not None:
                         # VERIFICAR SE TEM COLUNA '3%' NA OFERTA CB E SE TEM VALOR VÁLIDO (NÃO É NaN)
                         tem_3_percent_cb = '3%' in oferta_cb and pd.notna(oferta_cb['3%']) and float(oferta_cb['3%']) > 0
-                        tem_2_percent_cb = pd.notna(oferta_cb['2%']) and float(oferta_cb['2%']) > 0
+                        tem_2_percent_cb = '2%' in oferta_cb and pd.notna(oferta_cb['2%']) and float(oferta_cb['2%']) > 0
                         
                         if tem_3_percent_cb:
                             # NOVA LÓGICA COM 3 FAIXAS (3%, 2%, 1%) para CB
                             preco_oferta_3_cb = float(oferta_cb['3%'])
-                            preco_oferta_2_cb = float(oferta_cb['2%'])
+                            preco_oferta_2_cb = float(oferta_cb['2%']) if tem_2_percent_cb else None
                             
                             # Aplicar desconto de 5% para grupos especiais
                             grupos_especiais = ['REDE STYLLUS', 'REDE ROD E RAF']
@@ -632,40 +684,56 @@ def processar_planilhas():
                                 preco_comparacao = preco  # Mantém o preço normal
                             
                             # Lógica de classificação para CB com 3 faixas
-                            if preco_comparacao >= preco_oferta_3_cb:
-                                comissao = 0.03  # Alterado para 3% como decimal
-                            elif preco_comparacao >= preco_oferta_2_cb:
-                                comissao = 0.02  # Alterado para 2% como decimal
+                            if tem_2_percent_cb:
+                                if preco_comparacao >= preco_oferta_3_cb:
+                                    comissao = 0.03  # Alterado para 3% como decimal
+                                elif preco_comparacao >= preco_oferta_2_cb:
+                                    comissao = 0.02  # Alterado para 2% como decimal
+                                else:
+                                    comissao = 0.01  # Alterado para 1% como decimal
                             else:
-                                comissao = 0.01  # Alterado para 1% como decimal
+                                # Se não tem 2%, só tem 3% e 1%
+                                if preco_comparacao >= preco_oferta_3_cb:
+                                    comissao = 0.03  # Alterado para 3% como decimal
+                                else:
+                                    comissao = 0.01  # Alterado para 1% como decimal
                                 
                             preco_oferta_2 = preco_oferta_2_cb
                             preco_oferta_3 = preco_oferta_3_cb
-                            tem_2_percent = True
                             
                         else:
-                            # LÓGICA ANTIGA (apenas 2%, 1%) para CB
-                            preco_oferta_2_cb = float(oferta_cb['2%'])
-                            
-                            # Aplicar desconto de 5% para grupos especiais
-                            grupos_especiais = ['REDE STYLLUS', 'REDE ROD E RAF']
-                            if grupo == 'VAREJO CALVO' and grupo_produto in ['MIUDOS BOVINOS', 'CORTES DE FRANGO', 'SUINOS']:
-                                grupos_especiais.append('VAREJO CALVO')
-                            
-                            if grupo in grupos_especiais:
-                                preco_comparacao = preco * 0.95  # Preço - 5%
-                            else:
-                                preco_comparacao = preco  # Mantém o preço normal
-                            
-                            # Lógica de classificação para CB: 2% se >=, 1% se <
-                            if preco_comparacao >= preco_oferta_2_cb:
-                                comissao = 0.02  # Alterado para 2% como decimal
-                            else:
-                                comissao = 0.01  # Alterado para 1% como decimal
+                            # LÓGICA ANTIGA (apenas 2%, 1%) para CB - se existir 2%
+                            if tem_2_percent_cb:
+                                preco_oferta_2_cb = float(oferta_cb['2%'])
                                 
-                            preco_oferta_2 = preco_oferta_2_cb
-                            preco_oferta_3 = None
-                            tem_2_percent = False
+                                # Aplicar desconto de 5% para grupos especiais
+                                grupos_especiais = ['REDE STYLLUS', 'REDE ROD E RAF']
+                                if grupo == 'VAREJO CALVO' and grupo_produto in ['MIUDOS BOVINOS', 'CORTES DE FRANGO', 'SUINOS']:
+                                    grupos_especiais.append('VAREJO CALVO')
+                                
+                                if grupo in grupos_especiais:
+                                    preco_comparacao = preco * 0.95  # Preço - 5%
+                                else:
+                                    preco_comparacao = preco  # Mantém o preço normal
+                                
+                                # Lógica de classificação para CB: 2% se >=, 1% se <
+                                if preco_comparacao >= preco_oferta_2_cb:
+                                    comissao = 0.02  # Alterado para 2% como decimal
+                                else:
+                                    comissao = 0.01  # Alterado para 1% como decimal
+                                    
+                                preco_oferta_2 = preco_oferta_2_cb
+                                preco_oferta_3 = None
+                            else:
+                                # Se não tem nem 3% nem 2%, verificar se tem 1%
+                                if '1%' in oferta_cb and pd.notna(oferta_cb['1%']):
+                                    comissao = 0.01  # Alterado para 1% como decimal
+                                    preco_oferta_2 = None
+                                    preco_oferta_3 = None
+                                else:
+                                    # Sem oferta válida
+                                    registros_sem_oferta.append(row.to_dict())
+                                    continue
             
                         if is_devolucao:
                             comissao *= -1  # Mantém como decimal negativo
@@ -677,35 +745,31 @@ def processar_planilhas():
                         resultado_cb = {
                             **row.to_dict(),
                             'Preço - 5%': preco_menos_5,
-                            'Data_Oferta': oferta_cb['DT_REF'],
+                            'Data_Oferta': oferta_cb['DT_REF_OFF_CB'],
                             'Comissão_Correta': comissao,
                             'Status': 'Correto' if _comparar_comissoes(row['P. Com'], comissao, 4) else 'Incorreto',
                             'Tipo': 'CB',
-                            'Tipo_Oferta': 'Exata' if oferta_cb['DT_REF'] == data else 'Data Proxima'
+                            'Tipo_Oferta': 'Exata' if oferta_cb['DT_REF_OFF_CB'] == data else 'Data Proxima'
                         }
                         
                         # Adicionar preços de oferta conforme disponibilidade
-                        if tem_3_percent_cb:
+                        if preco_oferta_3 is not None:
                             resultado_cb['Preço_Oferta_3%'] = preco_oferta_3
+                        if preco_oferta_2 is not None:
                             resultado_cb['Preço_Oferta_2%'] = preco_oferta_2
-                            # Calcular diferença com base no preço de referência correto
-                            if comissao == 0.03:
-                                preco_referencia = preco_oferta_3
-                            elif comissao == 0.02:
-                                preco_referencia = preco_oferta_2
-                            else:
-                                preco_referencia = None
-                                
-                            if preco_referencia and preco_referencia > 0:
-                                resultado_cb['Diferença_Preço'] = f"{(preco_comparacao - preco_referencia)/preco_referencia:.2%}"
-                            else:
-                                resultado_cb['Diferença_Preço'] = 'N/A'
+                            
+                        # Calcular diferença com base no preço de referência correto
+                        if comissao == 0.03 and preco_oferta_3:
+                            preco_referencia = preco_oferta_3
+                        elif comissao == 0.02 and preco_oferta_2:
+                            preco_referencia = preco_oferta_2
                         else:
-                            resultado_cb['Preço_Oferta'] = preco_oferta_2
-                            if preco_oferta_2 and preco_oferta_2 > 0:
-                                resultado_cb['Diferença_Preço'] = f"{(preco_comparacao - preco_oferta_2)/preco_oferta_2:.2%}"
-                            else:
-                                resultado_cb['Diferença_Preço'] = 'Div/Zero'
+                            preco_referencia = None
+                            
+                        if preco_referencia and preco_referencia > 0:
+                            resultado_cb['Diferença_Preço'] = f"{(preco_comparacao - preco_referencia)/preco_referencia:.2%}"
+                        else:
+                            resultado_cb['Diferença_Preço'] = 'N/A'
                         
                         resultados_ofertas_cb.append(resultado_cb)
                         continue  # Pula para o próximo registro, já encontrou em CB
@@ -717,7 +781,7 @@ def processar_planilhas():
                     oferta_vog = encontrar_oferta_mais_proxima(ofertas_cod_vog, cod, data)
         
                     if oferta_vog is not None:
-                        preco_oferta_3 = float(oferta_vog['3%'])
+                        preco_oferta_3 = float(oferta_vog['3%']) if '3%' in oferta_vog and pd.notna(oferta_vog['3%']) else None
                         
                         # Verificar se tem coluna '2%' e se tem valor válido (não é NaN)
                         tem_2_percent = '2%' in oferta_vog and pd.notna(oferta_vog['2%']) and float(oferta_vog['2%']) > 0
@@ -734,7 +798,7 @@ def processar_planilhas():
                             preco_comparacao = preco  # Mantém o preço normal
                         
                         # NOVA LÓGICA DE CLASSIFICAÇÃO PARA VOG COM 3 FAIXAS
-                        if tem_2_percent:
+                        if preco_oferta_3 is not None and tem_2_percent:
                             # Com três faixas (3%, 2%, 1%)
                             if preco_comparacao >= preco_oferta_3:
                                 comissao = 0.03  # Alterado para 3% como decimal
@@ -742,12 +806,16 @@ def processar_planilhas():
                                 comissao = 0.02  # Alterado para 2% como decimal
                             else:
                                 comissao = 0.01  # Alterado para 1% como decimal
-                        else:
+                        elif preco_oferta_3 is not None:
                             # Com apenas duas faixas (3%, 1%) - lógica anterior
                             if preco_comparacao >= preco_oferta_3:
                                 comissao = 0.03  # Alterado para 3% como decimal
                             else:
                                 comissao = 0.01  # Alterado para 1% como decimal
+                        else:
+                            # Sem oferta válida
+                            registros_sem_oferta.append(row.to_dict())
+                            continue
             
                         if is_devolucao:
                             comissao *= -1  # Mantém como decimal negativo
@@ -758,36 +826,32 @@ def processar_planilhas():
                         # Preparar dados para o resultado
                         resultado = {
                             **row.to_dict(),
-                            'Preço_Oferta_3%': preco_oferta_3,
                             'Preço - 5%': preco_menos_5,
-                            'Data_Oferta': oferta_vog['Data'],
+                            'Data_Oferta': oferta_vog['DT_REF_OFF'],
                             'Comissão_Correta': comissao,
                             'Status': 'Correto' if _comparar_comissoes(row['P. Com'], comissao, 4) else 'Incorreto',
                             'Tipo': 'VOG',
-                            'Tipo_Oferta': 'Exata' if oferta_vog['Data'] == data else 'Data Proxima'
+                            'Tipo_Oferta': 'Exata' if oferta_vog['DT_REF_OFF'] == data else 'Data Proxima'
                         }
                         
                         # Adicionar preço da oferta de 2% se existir
-                        if tem_2_percent:
+                        if preco_oferta_3 is not None:
+                            resultado['Preço_Oferta_3%'] = preco_oferta_3
+                        if preco_oferta_2 is not None:
                             resultado['Preço_Oferta_2%'] = preco_oferta_2
-                            # Calcular diferença com base no preço de referência correto
-                            if comissao == 0.03:
-                                preco_referencia = preco_oferta_3
-                            elif comissao == 0.02:
-                                preco_referencia = preco_oferta_2
-                            else:
-                                preco_referencia = None
-                                
-                            if preco_referencia and preco_referencia > 0:
-                                resultado['Diferença_Preço'] = f"{(preco_comparacao - preco_referencia)/preco_referencia:.2%}"
-                            else:
-                                resultado['Diferença_Preço'] = 'N/A'
+                            
+                        # Calcular diferença com base no preço de referência correto
+                        if comissao == 0.03 and preco_oferta_3:
+                            preco_referencia = preco_oferta_3
+                        elif comissao == 0.02 and preco_oferta_2:
+                            preco_referencia = preco_oferta_2
                         else:
-                            # Para ofertas sem 2%, usar a lógica anterior
-                            if preco_oferta_3 and preco_oferta_3 > 0:
-                                resultado['Diferença_Preço'] = f"{(preco_comparacao - preco_oferta_3)/preco_oferta_3:.2%}"
-                            else:
-                                resultado['Diferença_Preço'] = 'Div/Zero'
+                            preco_referencia = None
+                            
+                        if preco_referencia and preco_referencia > 0:
+                            resultado['Diferença_Preço'] = f"{(preco_comparacao - preco_referencia)/preco_referencia:.2%}"
+                        else:
+                            resultado['Diferença_Preço'] = 'N/A'
                         
                         resultados_ofertas_vog.append(resultado)
                     else:
@@ -817,16 +881,6 @@ def processar_planilhas():
         print(f"- Itens sem oferta encontrada: {len(df_sem_oferta_final)}")
         print(f"- Erros durante o processamento: {len(df_logs_erros)}")
         
-        # Exibir estatísticas das novas colunas
-        if '3%' in df_ofertas_cb.columns:
-            cb_com_3_percent = df_ofertas_cb['3%'].notna().sum()
-            cb_com_2_percent = df_ofertas_cb['2%'].notna().sum()
-            print(f"\nEstatísticas OFF_VOG_CB:")
-            print(f"  - Registros com coluna '3%': {cb_com_3_percent}")
-            print(f"  - Registros com coluna '2%': {cb_com_2_percent}")
-            print(f"  - Ofetas CB com 3 faixas (3%,2%,1%): {cb_com_3_percent}")
-            print(f"  - Ofetas CB com 2 faixas (2%,1%): {cb_com_2_percent - cb_com_3_percent}")
-
         # 5. Exportar para Excel
         print(f"\n8. SALVANDO RESULTADOS EM: {caminho_downloads}")
         with pd.ExcelWriter(caminho_downloads, engine='openpyxl') as writer:
@@ -950,6 +1004,8 @@ def processar_planilhas():
         
     except Exception as e:
         print(f"\nERRO CRÍTICO DURANTE O PROCESSAMENTO: {str(e)}")
+        import traceback
+        traceback.print_exc()
         raise
 
 if __name__ == "__main__":
