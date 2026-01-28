@@ -274,7 +274,11 @@ def aplicar_regras_comissao_fixa(row, regras):
     if nfe == '120153' and codproduto == 1342:
         return _ajustar_para_devolucao(0.01, is_devolucao) 
     if nfe == '120159' and codproduto == 1342:
-        return _ajustar_para_devolucao(0.03, is_devolucao) 
+        return _ajustar_para_devolucao(0.01, is_devolucao) 
+    if nfe == '120937' and codproduto == 1807:
+        return _ajustar_para_devolucao(0.01, is_devolucao) 
+    if nfe == '121117' and codproduto == 1781:
+        return _ajustar_para_devolucao(0.01, is_devolucao) 
 
     # --- NOVA REGRA: POR PRODUTO ---
     if codproduto == 1807 or codproduto == 947 or codproduto == 1914 or codproduto == 2000:
@@ -475,7 +479,7 @@ def _converter_valor_oferta(valor):
         return np.nan
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\MRG_260121 - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\MRG_260127 - wapp - v2.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
