@@ -112,7 +112,7 @@ def criar_regras_comissao_fixa():
             0.00: { 
                 'grupos': [
                     'REDE AKKI', 'VAREJO ANDORINHA', 'VAREJO BERGAMINI', 'REDE DA PRACA', 'REDE DOVALE',
-                    'REDE MERCADAO', 'REDE REIMBERG', 'REDE SEMAR', 'REDE TRIMAIS', 'REDE VOVO ZUZU',
+                    'REDE REIMBERG', 'REDE SEMAR', 'REDE TRIMAIS', 'REDE VOVO ZUZU',
                     'REDE BENGALA', 'VAREJO OURINHOS', 'REDE RICOY'
                 ],
                 'razoes': [
@@ -170,6 +170,25 @@ def criar_regras_comissao_fixa():
                 0.03: {
                     'grupos_produto': ['SALAME UAI']
                 },
+            },
+            'REDE MERCADAO': {
+                0.005: {
+                    'grupos_produto': [
+                        'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
+                        'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGÃO', 
+                        'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
+                        'KITS FEIJOADA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
+                    ]
+                },
+                0.00: {
+                    'todos_exceto': [
+                        'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
+                        'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGÃO', 
+                        'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
+                        'KITS FEIJOADA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
+                    ]
+                }
+
             },
             'REDE ROLDAO': {
                 0.02: {
@@ -286,6 +305,19 @@ def aplicar_regras_comissao_fixa(row, regras):
         
         if grupo_produto in grupos_2_percent:
             return _ajustar_para_devolucao(0.02, is_devolucao)
+        else:
+            return _ajustar_para_devolucao(0.00, is_devolucao)
+        
+    if grupo == 'REDE MERCADAO':
+        grupos_05_percent = [
+            'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
+            'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGÃO', 
+            'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
+            'KITS FEIJOADA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
+        ]
+        
+        if grupo_produto in grupos_05_percent:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
         else:
             return _ajustar_para_devolucao(0.00, is_devolucao)
 
