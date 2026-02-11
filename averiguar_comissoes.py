@@ -137,11 +137,6 @@ def criar_regras_comissao_fixa():
             }
         },
         'grupos_especificos': {
-            'REDE STYLLUS': {
-                0.00: {
-                    'grupos_produto': ['TORRESMO', 'SALAME UAI', 'EMPANADOS']
-                }
-            },
             'REDE ROSSI': {
                 0.03: {
                     'codigos': [937, 1698, 1701, 1587, 1700, 1586, 1699, 943, 1735, 1624, 1134]
@@ -255,6 +250,22 @@ def aplicar_regras_comissao_fixa(row, regras):
         return _ajustar_para_devolucao(0.03, is_devolucao) 
     if nfe == '121905' and codproduto == 1477:
         return _ajustar_para_devolucao(0.01, is_devolucao) 
+    if nfe == '122520' and codproduto == 2045:
+        return _ajustar_para_devolucao(0.01, is_devolucao) 
+    if nfe == '122643' and codproduto == 1443:
+        return _ajustar_para_devolucao(0.01, is_devolucao) 
+    if nfe == '122886' and codproduto == 2010:
+        return _ajustar_para_devolucao(0.01, is_devolucao) 
+    if nfe == '122221' and codproduto == 2026:
+        return _ajustar_para_devolucao(0.005, is_devolucao) 
+    if nfe == '122225' and codproduto == 2026:
+        return _ajustar_para_devolucao(0.005, is_devolucao) 
+    if nfe == '122265' and codproduto == 2026:
+        return _ajustar_para_devolucao(0.005, is_devolucao) 
+    if nfe == '122401' and codproduto == 2026:
+        return _ajustar_para_devolucao(0.005, is_devolucao) 
+    if nfe == '122559' and codproduto == 2026:
+        return _ajustar_para_devolucao(0.005, is_devolucao) 
 
     if codproduto == 1807 or codproduto == 947 or codproduto == 1914 or codproduto == 2000:
         return _ajustar_para_devolucao(0.01, is_devolucao)
@@ -458,7 +469,7 @@ def classificar_comissao_por_oferta(preco, preco_oferta_3, preco_oferta_2, preco
     return comissao
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\260205_MRG - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\260210_MRG - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
