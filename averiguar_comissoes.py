@@ -75,7 +75,8 @@ def criar_regras_comissao_kg():
         },
         'VERA LUCIA MUNIZ': {
             'grupo_codigos': {'VAREJO MOTA NOVO': [812]},
-            'razao_codigos': {'SUPERMERCADO FEDERZONI LTDA': [812]}
+            'razao_codigos': {'SUPERMERCADO FEDERZONI LTDA': [812],
+                              'HX3698 HOUSE CENTER LTDA': [812]}
         },
         'PAMELA FERREIRA VIEIRA': {
             'grupo_codigos': {
@@ -311,6 +312,8 @@ def aplicar_regras_comissao_fixa(row, regras):
             return _ajustar_para_devolucao(0.005, is_devolucao) 
     if nfe == '123282' and codproduto == 2050:
             return _ajustar_para_devolucao(0.005, is_devolucao) 
+    if nfe == '122636' and codproduto == 2050:
+            return _ajustar_para_devolucao(0.005, is_devolucao) 
     if nfe == '122705' and codproduto == 1505:
             return _ajustar_para_devolucao(0.005, is_devolucao) 
     if nfe == '122706' and codproduto == 1505:
@@ -334,6 +337,8 @@ def aplicar_regras_comissao_fixa(row, regras):
     if nfe == '122638' and codproduto == 2052:
             return _ajustar_para_devolucao(0.005, is_devolucao) 
     if nfe == '122685' and codproduto == 2052:
+            return _ajustar_para_devolucao(0.005, is_devolucao) 
+    if nfe == '123061' and codproduto == 1513:
             return _ajustar_para_devolucao(0.005, is_devolucao) 
 
 
@@ -552,7 +557,7 @@ def classificar_comissao_por_oferta(preco, preco_oferta_3, preco_oferta_2, preco
     return comissao
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\260212_MRG - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\260215_MRG - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
