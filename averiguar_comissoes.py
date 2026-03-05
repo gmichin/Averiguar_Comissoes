@@ -175,17 +175,13 @@ def criar_regras_comissao_fixa():
             'REDE MERCADAO': {
                 0.005: {
                     'grupos_produto': [
-                        'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
-                        'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGÃO', 
-                        'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
+                        'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 
                         'KITS FEIJOADA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
                     ]
                 },
                 0.00: {
                     'todos_exceto': [
-                        'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
-                        'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGÃO', 
-                        'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
+                        'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 
                         'KITS FEIJOADA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
                     ]
                 }
