@@ -348,10 +348,8 @@ def aplicar_regras_comissao_fixa(row, regras):
         
     if grupo == 'REDE MERCADAO':
         grupos_05_percent = [
-            'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
-            'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGÃO', 
-            'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
-            'KITS FEIJOADA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
+                        'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 
+                        'KITS FEIJOADA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
         ]
         
         if grupo_produto in grupos_05_percent:
@@ -539,7 +537,7 @@ def classificar_comissao_por_oferta(preco, preco_oferta_3, preco_oferta_2, preco
     return comissao
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\260323_MRG - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\260331_MRG - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
