@@ -322,7 +322,12 @@ def aplicar_regras_comissao_fixa(row, regras):
         return _ajustar_para_devolucao(0.005, is_devolucao) 
     if nfe == '126528' and codproduto == 8599:
         return _ajustar_para_devolucao(0.005, is_devolucao) 
-
+    if nfe == '127544' and codproduto == 1525:
+        return _ajustar_para_devolucao(0.005, is_devolucao) 
+    if nfe == '127561' and codproduto == 2038:
+        return _ajustar_para_devolucao(0.005, is_devolucao) 
+    if nfe == '127592' and codproduto == 2038:
+        return _ajustar_para_devolucao(0.005, is_devolucao) 
 
     if codproduto == 1807 or codproduto == 947 or codproduto == 1914 or codproduto == 2000:
         return _ajustar_para_devolucao(0.01, is_devolucao)
