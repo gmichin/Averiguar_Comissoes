@@ -178,12 +178,6 @@ def criar_regras_comissao_fixa():
                 },
             },
             'REDE MERCADAO': {
-                0.005: {
-                    'grupos_produto': [
-                        'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 
-                        'KITS FEIJOADA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
-                    ]
-                },
                 0.00: {
                     'todos_exceto': [
                         'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 
@@ -267,84 +261,6 @@ def aplicar_regras_comissao_fixa(row, regras):
     nfe = str(row['NF-E']).strip()
     is_devolucao = str(row['CF']).startswith('DEV')
 
-    if nfe == '125456' and codproduto == 1451:
-        return _ajustar_para_devolucao(0.03, is_devolucao) 
-    if nfe == '125249' and codproduto == 1416:
-        return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '129386' and codproduto == 1964:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '129598' and codproduto == 1964:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '129604' and codproduto == 1964:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '130101' and codproduto == 1645:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '128887' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '128887' and codproduto == 878:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '128889' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '128890' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '128890' and codproduto == 878:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '128938' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '128938' and codproduto == 878:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '128949' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '128965' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '128965' and codproduto == 878:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '129055' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '129055' and codproduto == 878:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '129065' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '129065' and codproduto == 878:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '129233' and codproduto == 1898:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '129303' and codproduto == 1898:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '129461' and codproduto == 1898:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '129563' and codproduto == 878:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '129678' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '129679' and codproduto == 1898:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '129775' and codproduto == 878:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '129840' and codproduto == 1898:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '130000' and codproduto == 1522:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '130009' and codproduto == 1913:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '130009' and codproduto == 1522:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '130018' and codproduto == 1913:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '130018' and codproduto == 1522:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '130020' and codproduto == 1522:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '130023' and codproduto == 1522:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '130026' and codproduto == 1522:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '130089' and codproduto == 1522:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '130091' and codproduto == 1522:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
-    if nfe == '130206' and codproduto == 1522:
-            return _ajustar_para_devolucao(0.005, is_devolucao) 
     if nfe == '131009' and codproduto == 1477:
             return _ajustar_para_devolucao(0.03, is_devolucao) 
 
@@ -370,16 +286,6 @@ def aplicar_regras_comissao_fixa(row, regras):
         else:
             return _ajustar_para_devolucao(0.00, is_devolucao)
         
-    if grupo == 'REDE MERCADAO':
-        grupos_05_percent = [
-                        'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 
-                        'KITS FEIJOADA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
-        ]
-        
-        if grupo_produto in grupos_05_percent:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-        else:
-            return _ajustar_para_devolucao(0.00, is_devolucao)
 
     if grupo == 'VAREJO CALVO':
         if grupo_produto in ['MIUDOS BOVINOS', 'CORTES DE FRANGO', 'SUINOS']:
@@ -564,7 +470,7 @@ def classificar_comissao_por_oferta(preco, preco_oferta_3, preco_oferta_2, preco
     return comissao
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\260425_MRG - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\260513_MRG - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
