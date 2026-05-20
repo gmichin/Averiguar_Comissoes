@@ -263,6 +263,32 @@ def aplicar_regras_comissao_fixa(row, regras):
 
     if nfe == '131009' and codproduto == 1477:
             return _ajustar_para_devolucao(0.03, is_devolucao) 
+    if nfe == '134147' and codproduto == 3086:
+            return _ajustar_para_devolucao(0.03, is_devolucao) 
+    if nfe == '134147' and codproduto == 3085:
+            return _ajustar_para_devolucao(0.03, is_devolucao) 
+    if nfe == '134147' and codproduto == 3091:
+            return _ajustar_para_devolucao(0.03, is_devolucao) 
+    if nfe == '134147' and codproduto == 3087:
+            return _ajustar_para_devolucao(0.03, is_devolucao) 
+    if nfe == '134147' and codproduto == 3088:
+            return _ajustar_para_devolucao(0.03, is_devolucao) 
+    if nfe == '134147' and codproduto == 3089:
+            return _ajustar_para_devolucao(0.03, is_devolucao) 
+    if nfe == '134175' and codproduto == 3086:
+            return _ajustar_para_devolucao(0.03, is_devolucao) 
+    if nfe == '134175' and codproduto == 3085:
+            return _ajustar_para_devolucao(0.03, is_devolucao) 
+    if nfe == '134175' and codproduto == 3091:
+            return _ajustar_para_devolucao(0.03, is_devolucao) 
+    if nfe == '134175' and codproduto == 3087:
+            return _ajustar_para_devolucao(0.03, is_devolucao) 
+    if nfe == '134175' and codproduto == 3088:
+            return _ajustar_para_devolucao(0.03, is_devolucao) 
+    if nfe == '134175' and codproduto == 3089:
+            return _ajustar_para_devolucao(0.03, is_devolucao) 
+    if nfe == '134686' and codproduto == 4010:
+            return _ajustar_para_devolucao(0.03, is_devolucao) 
 
     if codproduto == 1807 or codproduto == 947 or codproduto == 1914 or codproduto == 2000 or codproduto == 3002 or codproduto == 2094:
         return _ajustar_para_devolucao(0.01, is_devolucao)
@@ -470,7 +496,7 @@ def classificar_comissao_por_oferta(preco, preco_oferta_3, preco_oferta_2, preco
     return comissao
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\260513_MRG - wapp.xlsx"
+    caminho_origem = r"C:\Users\DELL\Downloads\260519_MRG - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
