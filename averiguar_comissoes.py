@@ -289,6 +289,200 @@ def aplicar_regras_comissao_fixa(row, regras):
             return _ajustar_para_devolucao(0.03, is_devolucao) 
     if nfe == '134686' and codproduto == 4010:
             return _ajustar_para_devolucao(0.03, is_devolucao) 
+    if nfe == '134799' and codproduto == 1963:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '132637' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '132638' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '132639' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '132641' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '132642' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '132658' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '132686' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '132718' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '132721' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '132774' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '132844' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '132902' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '132902' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '132903' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '132956' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '132956' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '132982' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '132982' and codproduto == 2424:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '132982' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '132984' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133014' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133019' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133019' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133034' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133085' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133085' and codproduto == 2424:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133165' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133204' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133204' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133207' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133214' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133214' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133242' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133306' and codproduto == 2424:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133306' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133346' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133508' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133515' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133520' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133521' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133530' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133537' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133539' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133542' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133543' and codproduto == 1882:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133551' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133557' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133558' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133558' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133560' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133563' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133600' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133601' and codproduto == 1882:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133606' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133607' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133608' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133609' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133610' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133611' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133626' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133647' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133648' and codproduto == 1324:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133721' and codproduto == 2198:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133734' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133734' and codproduto == 2198:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133785' and codproduto == 2198:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133786' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133901' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133944' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133945' and codproduto == 2198:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '133981' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134077' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134130' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134132' and codproduto == 2198:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134141' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134142' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134143' and codproduto == 2198:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134144' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134145' and codproduto == 2198:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134146' and codproduto == 2198:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134219' and codproduto == 2198:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134255' and codproduto == 2424:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134321' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134333' and codproduto == 2198:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134371' and codproduto == 2198:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134372' and codproduto == 2198:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134373' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134467' and codproduto == 1384:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134470' and codproduto == 1384:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134489' and codproduto == 1384:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134666' and codproduto == 2198:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134808' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134820' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134831' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134843' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '134844' and codproduto == 836:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
 
     if codproduto == 1807 or codproduto == 947 or codproduto == 1914 or codproduto == 2000 or codproduto == 3002 or codproduto == 2094:
         return _ajustar_para_devolucao(0.01, is_devolucao)
@@ -496,7 +690,7 @@ def classificar_comissao_por_oferta(preco, preco_oferta_3, preco_oferta_2, preco
     return comissao
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\DELL\Downloads\260519_MRG - wapp.xlsx"
+    caminho_origem = r"C:\Users\DELL\Downloads\260520_MRG - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
