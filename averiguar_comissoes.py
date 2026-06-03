@@ -22,11 +22,6 @@ def encontrar_oferta_mais_proxima(df_ofertas, codproduto, data_venda):
         # Converter datas
         ofertas_cod['DT_REF_OFF'] = pd.to_datetime(ofertas_cod['DT_REF_OFF']).dt.date
         
-        # DEBUG: Mostrar todas as ofertas disponíveis (opcional)
-        # print(f"DEBUG - Produto {cod}, Data venda: {data}")
-        # for idx, row in ofertas_cod.iterrows():
-        #     print(f"  Data: {row['DT_REF_OFF']}, 3%: {row.get('3%', 'N/A')}, 2%: {row.get('2%', 'N/A')}")
-        
         # 1. Buscar oferta na data exata
         oferta_exata = ofertas_cod[ofertas_cod['DT_REF_OFF'] == data]
         if not oferta_exata.empty:
