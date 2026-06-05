@@ -22,11 +22,6 @@ def encontrar_oferta_mais_proxima(df_ofertas, codproduto, data_venda):
         # Converter datas
         ofertas_cod['DT_REF_OFF'] = pd.to_datetime(ofertas_cod['DT_REF_OFF']).dt.date
         
-        # DEBUG: Mostrar todas as ofertas disponíveis (opcional)
-        # print(f"DEBUG - Produto {cod}, Data venda: {data}")
-        # for idx, row in ofertas_cod.iterrows():
-        #     print(f"  Data: {row['DT_REF_OFF']}, 3%: {row.get('3%', 'N/A')}, 2%: {row.get('2%', 'N/A')}")
-        
         # 1. Buscar oferta na data exata
         oferta_exata = ofertas_cod[ofertas_cod['DT_REF_OFF'] == data]
         if not oferta_exata.empty:
@@ -114,7 +109,7 @@ def criar_regras_comissao_fixa():
                 'grupos': [
                     'REDE AKKI', 'VAREJO ANDORINHA', 'VAREJO BERGAMINI', 'REDE DA PRACA', 'REDE DOVALE',
                     'REDE REIMBERG', 'REDE SEMAR', 'REDE TRIMAIS', 'REDE VOVO ZUZU',
-                    'REDE BENGALA', 'VAREJO OURINHOS', 'REDE RICOY'
+                    'REDE BENGALA', 'VAREJO OURINHOS', 'REDE RICOY', 'REDE MERCADAO'
                 ],
                 'razoes': [
                     'COMERCIO DE CARNES E ROTISSERIE DUTRA LT',
@@ -176,15 +171,6 @@ def criar_regras_comissao_fixa():
                 0.03: {
                     'grupos_produto': ['SALAME UAI']
                 },
-            },
-            'REDE MERCADAO': {
-                0.00: {
-                    'todos_exceto': [
-                        'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 
-                        'KITS FEIJOADA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
-                    ]
-                }
-
             },
             'REDE ROLDAO': {
                 0.02: {
@@ -263,226 +249,8 @@ def aplicar_regras_comissao_fixa(row, regras):
 
     if nfe == '131009' and codproduto == 1477:
             return _ajustar_para_devolucao(0.03, is_devolucao) 
-    if nfe == '134147' and codproduto == 3086:
-            return _ajustar_para_devolucao(0.03, is_devolucao) 
-    if nfe == '134147' and codproduto == 3085:
-            return _ajustar_para_devolucao(0.03, is_devolucao) 
-    if nfe == '134147' and codproduto == 3091:
-            return _ajustar_para_devolucao(0.03, is_devolucao) 
-    if nfe == '134147' and codproduto == 3087:
-            return _ajustar_para_devolucao(0.03, is_devolucao) 
-    if nfe == '134147' and codproduto == 3088:
-            return _ajustar_para_devolucao(0.03, is_devolucao) 
-    if nfe == '134147' and codproduto == 3089:
-            return _ajustar_para_devolucao(0.03, is_devolucao) 
-    if nfe == '134175' and codproduto == 3086:
-            return _ajustar_para_devolucao(0.03, is_devolucao) 
-    if nfe == '134175' and codproduto == 3085:
-            return _ajustar_para_devolucao(0.03, is_devolucao) 
-    if nfe == '134175' and codproduto == 3091:
-            return _ajustar_para_devolucao(0.03, is_devolucao) 
-    if nfe == '134175' and codproduto == 3087:
-            return _ajustar_para_devolucao(0.03, is_devolucao) 
-    if nfe == '134175' and codproduto == 3088:
-            return _ajustar_para_devolucao(0.03, is_devolucao) 
-    if nfe == '134175' and codproduto == 3089:
-            return _ajustar_para_devolucao(0.03, is_devolucao) 
-    if nfe == '134686' and codproduto == 4010:
-            return _ajustar_para_devolucao(0.03, is_devolucao) 
-    if nfe == '134799' and codproduto == 1963:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '132637' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '132638' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '132639' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '132641' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '132642' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '132658' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '132686' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '132718' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '132721' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '132774' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '132844' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '132902' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '132902' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '132903' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '132956' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '132956' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '132982' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '132982' and codproduto == 2424:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '132982' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '132984' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133014' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133019' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133019' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133034' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133085' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133085' and codproduto == 2424:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133165' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133204' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133204' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133207' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133214' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133214' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133242' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133306' and codproduto == 2424:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133306' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133346' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133508' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133515' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133520' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133521' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133530' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133537' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133539' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133542' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133543' and codproduto == 1882:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133551' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133557' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133558' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133558' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133560' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133563' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133600' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133601' and codproduto == 1882:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133606' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133607' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133608' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133609' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133610' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133611' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133626' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133647' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133648' and codproduto == 1324:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133721' and codproduto == 2198:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133734' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133734' and codproduto == 2198:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133785' and codproduto == 2198:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133786' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133901' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133944' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133945' and codproduto == 2198:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '133981' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134077' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134130' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134132' and codproduto == 2198:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134141' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134142' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134143' and codproduto == 2198:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134144' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134145' and codproduto == 2198:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134146' and codproduto == 2198:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134219' and codproduto == 2198:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134255' and codproduto == 2424:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134321' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134333' and codproduto == 2198:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134371' and codproduto == 2198:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134372' and codproduto == 2198:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134373' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134467' and codproduto == 1384:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134470' and codproduto == 1384:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134489' and codproduto == 1384:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134666' and codproduto == 2198:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134808' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134820' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134831' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134843' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
-    if nfe == '134844' and codproduto == 836:
-            return _ajustar_para_devolucao(0.005, is_devolucao)
+    
+    
 
     if codproduto == 1807 or codproduto == 947 or codproduto == 1914 or codproduto == 2000 or codproduto == 3002 or codproduto == 2094:
         return _ajustar_para_devolucao(0.01, is_devolucao)
@@ -690,19 +458,60 @@ def classificar_comissao_por_oferta(preco, preco_oferta_3, preco_oferta_2, preco
     return comissao
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\DELL\Downloads\260520_MRG - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\260602_MRG - wapp.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
         print("=== INÍCIO DO PROCESSAMENTO ===")
         
-        # 1. Ler os dados
-        df_base = pd.read_excel(caminho_origem, sheet_name='Base (3,5%)', header=8)
+        # 1. Ler os dados da aba FEC_PQ com cabeçalho na linha 10 (A10)
+        df_base = pd.read_excel(caminho_origem, sheet_name='FEC_PQ', header=9)  # header=9 porque linha 10 é índice 9
         print(f"TOTAL DE REGISTROS NA BASE: {len(df_base)}")
         
-        colunas_base = ['CF', 'RAZAO', 'GRUPO', 'NF-E', 'DATA', 'VENDEDOR', 'CODPRODUTO',
-                       'GRUPO PRODUTO', 'DESCRICAO', 'P. Com', 'Preço Venda ']
-        df_base = df_base[colunas_base].rename(columns={'Preço Venda ': 'Preço_Venda'})
+        # Mapeamento de colunas antigas para novas (baseado nos nomes disponíveis em FEC_PQ)
+        colunas_necessarias = {
+            'CF': 'CF',
+            'RAZAO': 'RAZAO',
+            'GRUPO': 'GRUPO',
+            'NF-E': 'NF-E',
+            'DATA': 'DATA',
+            'VENDEDOR': 'VENDEDOR',
+            'CODPRODUTO': 'CODPRODUTO',
+            'GRUPO PRODUTO': 'GRUPO PRODUTO',
+            'DESCRICAO': 'DESCRICAO',
+            'P. Com': 'P. Com',
+            'Preço Venda': 'PRECO VENDA'  # Em FEC_PQ está como "PRECO VENDA"
+        }
+        
+        # Verificar se todas as colunas necessárias existem
+        for col_original, col_nova in colunas_necessarias.items():
+            if col_nova not in df_base.columns:
+                print(f"ATENÇÃO: Coluna '{col_nova}' não encontrada na aba FEC_PQ")
+                # Tentar encontrar variações do nome
+                colunas_encontradas = [c for c in df_base.columns if c.upper().strip() == col_nova.upper().strip()]
+                if colunas_encontradas:
+                    print(f"  Encontrada coluna similar: {colunas_encontradas[0]}")
+                    colunas_necessarias[col_original] = colunas_encontradas[0]
+                else:
+                    print(f"  Coluna não encontrada! Valores disponíveis: {list(df_base.columns)[:20]}")
+        
+        # Selecionar apenas as colunas necessárias
+        df_base = df_base[list(colunas_necessarias.values())].copy()
+        
+        # Renomear para os nomes padrão do código
+        df_base = df_base.rename(columns={
+            colunas_necessarias['CF']: 'CF',
+            colunas_necessarias['RAZAO']: 'RAZAO',
+            colunas_necessarias['GRUPO']: 'GRUPO',
+            colunas_necessarias['NF-E']: 'NF-E',
+            colunas_necessarias['DATA']: 'DATA',
+            colunas_necessarias['VENDEDOR']: 'VENDEDOR',
+            colunas_necessarias['CODPRODUTO']: 'CODPRODUTO',
+            colunas_necessarias['GRUPO PRODUTO']: 'GRUPO PRODUTO',
+            colunas_necessarias['DESCRICAO']: 'DESCRICAO',
+            colunas_necessarias['P. Com']: 'P. Com',
+            colunas_necessarias['Preço Venda']: 'Preço_Venda'
+        })
         
         # Converter e formatar dados
         df_base['DATA'] = pd.to_datetime(df_base['DATA']).dt.date
