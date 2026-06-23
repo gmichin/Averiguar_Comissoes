@@ -249,7 +249,81 @@ def aplicar_regras_comissao_fixa(row, regras):
 
     if nfe == '131009' and codproduto == 1477:
             return _ajustar_para_devolucao(0.03, is_devolucao) 
-    
+    if nfe == '136119' and codproduto == 4011:
+            return _ajustar_para_devolucao(0.005, is_devolucao) 
+    if nfe == '136129' and codproduto == 1384:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '136130' and codproduto == 4011:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '136130' and codproduto == 1384:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '136148' and codproduto == 4011:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '136148' and codproduto == 1384:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '136150' and codproduto == 4011:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '136150' and codproduto == 1384:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '136169' and codproduto == 1384:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '136171' and codproduto == 1384:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '136171' and codproduto == 1874:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '136172' and codproduto == 4011:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '136172' and codproduto == 1384:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '136173' and codproduto == 1384:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '136949' and codproduto == 1878:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '137033' and codproduto == 1878:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '137271' and codproduto == 1584:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '137319' and codproduto == 1584:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '137426' and codproduto == 1584:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '137560' and codproduto == 1567:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '137596' and codproduto == 1878:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '137596' and codproduto == 1567:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '137842' and codproduto == 8006:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '137933' and codproduto == 1584:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '137939' and codproduto == 2198:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '137939' and codproduto == 1584:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '137939' and codproduto == 1567:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '137941' and codproduto == 1584:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '137943' and codproduto == 1584:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '137992' and codproduto == 1584:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '138031' and codproduto == 1567:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '138067' and codproduto == 1584:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '138078' and codproduto == 1567:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '138143' and codproduto == 1567:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '138378' and codproduto == 1584:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '138521' and codproduto == 1584:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+    if nfe == '138753' and codproduto == 2198:
+            return _ajustar_para_devolucao(0.005, is_devolucao)
+
     
 
     if codproduto == 1807 or codproduto == 947 or codproduto == 1914 or codproduto == 2000 or codproduto == 3002 or codproduto == 2094:
@@ -458,7 +532,7 @@ def classificar_comissao_por_oferta(preco, preco_oferta_3, preco_oferta_2, preco
     return comissao
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\260602_MRG - wapp.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\260620_MRG.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
