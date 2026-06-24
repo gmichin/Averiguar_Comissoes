@@ -531,6 +531,73 @@ def classificar_comissao_por_oferta(preco, preco_oferta_3, preco_oferta_2, preco
     
     return comissao
 
+def padronizar_colunas(df, tipo='comissao'):
+    """
+    Padroniza a ordem e nomes das colunas conforme solicitado
+    ORDEM: RAZAO | GRUPO | ROMANEIO | NF-E | DATA | VENDEDOR | COD | GRUPO | DESCRICAO | PV | Com | TIPO
+    """
+    if df.empty:
+        return df
+    
+    # Mapeamento de colunas originais para os novos nomes
+    mapeamento = {}
+    
+    # Colunas base
+    if 'RAZAO' in df.columns:
+        mapeamento['RAZAO'] = 'RAZAO'
+    if 'GRUPO' in df.columns:
+        mapeamento['GRUPO'] = 'GRUPO'
+    if 'Romaneio' in df.columns:
+        mapeamento['Romaneio'] = 'ROMANEIO'  # Forçando maiúsculo
+    if 'NF-E' in df.columns:
+        mapeamento['NF-E'] = 'NF-E'
+    if 'DATA' in df.columns:
+        mapeamento['DATA'] = 'DATA'
+    if 'VENDEDOR' in df.columns:
+        mapeamento['VENDEDOR'] = 'VENDEDOR'
+    if 'CODPRODUTO' in df.columns:
+        mapeamento['CODPRODUTO'] = 'COD'
+    if 'GRUPO PRODUTO' in df.columns:
+        mapeamento['GRUPO PRODUTO'] = 'GRUPO'
+    if 'DESCRICAO' in df.columns:
+        mapeamento['DESCRICAO'] = 'DESCRICAO'
+    if 'Preço_Venda' in df.columns:
+        mapeamento['Preço_Venda'] = 'PV'
+    
+    # Colunas de comissão
+    if 'Comissao_Esperada' in df.columns:
+        mapeamento['Comissao_Esperada'] = 'Com'
+    elif 'Comissão_Correta' in df.columns:
+        mapeamento['Comissão_Correta'] = 'Com'
+    elif 'P. Com' in df.columns:
+        mapeamento['P. Com'] = 'Com Atual'
+    
+    if 'Tipo' in df.columns:
+        mapeamento['Tipo'] = 'TIPO'
+    
+    # Adicionar outras colunas que possam existir (sem renomear)
+    for col in df.columns:
+        if col not in mapeamento:
+            mapeamento[col] = col
+    
+    # Renomear colunas
+    df = df.rename(columns=mapeamento)
+    
+    # Definir ordem das colunas EXATAMENTE como solicitado
+    # ROMANEIO agora está depois de GRUPO e antes de NF-E
+    ordem_colunas = ['RAZAO', 'GRUPO', 'ROMANEIO', 'NF-E', 'DATA', 'VENDEDOR', 
+                     'COD', 'GRUPO', 'DESCRICAO', 'PV', 'Com', 'TIPO']
+    
+    # Adicionar outras colunas que possam existir no final
+    for col in df.columns:
+        if col not in ordem_colunas:
+            ordem_colunas.append(col)
+    
+    # Filtrar apenas colunas que existem no DataFrame
+    ordem_colunas = [col for col in ordem_colunas if col in df.columns]
+    
+    return df[ordem_colunas]
+
 def processar_planilhas():
     caminho_origem = r"C:\Users\DELL\Downloads\260623_MRG.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
@@ -539,10 +606,10 @@ def processar_planilhas():
         print("=== INÍCIO DO PROCESSAMENTO ===")
         
         # 1. Ler os dados da aba FEC_PQ com cabeçalho na linha 10 (A10)
-        df_base = pd.read_excel(caminho_origem, sheet_name='FEC_PQ', header=9)  # header=9 porque linha 10 é índice 9
+        df_base = pd.read_excel(caminho_origem, sheet_name='FEC_PQ', header=9)
         print(f"TOTAL DE REGISTROS NA BASE: {len(df_base)}")
         
-        # Mapeamento de colunas antigas para novas (baseado nos nomes disponíveis em FEC_PQ)
+        # Mapeamento de colunas
         colunas_necessarias = {
             'CF': 'CF',
             'RAZAO': 'RAZAO',
@@ -554,14 +621,14 @@ def processar_planilhas():
             'GRUPO PRODUTO': 'GRUPO PRODUTO',
             'DESCRICAO': 'DESCRICAO',
             'P. Com': 'P. Com',
-            'Preço Venda': 'PRECO VENDA'  # Em FEC_PQ está como "PRECO VENDA"
+            'Preço Venda': 'PRECO VENDA',
+            'Romaneio': 'ROMANEIO'
         }
         
-        # Verificar se todas as colunas necessárias existem
+        # Verificar e ajustar colunas
         for col_original, col_nova in colunas_necessarias.items():
             if col_nova not in df_base.columns:
                 print(f"ATENÇÃO: Coluna '{col_nova}' não encontrada na aba FEC_PQ")
-                # Tentar encontrar variações do nome
                 colunas_encontradas = [c for c in df_base.columns if c.upper().strip() == col_nova.upper().strip()]
                 if colunas_encontradas:
                     print(f"  Encontrada coluna similar: {colunas_encontradas[0]}")
@@ -569,10 +636,8 @@ def processar_planilhas():
                 else:
                     print(f"  Coluna não encontrada! Valores disponíveis: {list(df_base.columns)[:20]}")
         
-        # Selecionar apenas as colunas necessárias
+        # Selecionar e renomear colunas
         df_base = df_base[list(colunas_necessarias.values())].copy()
-        
-        # Renomear para os nomes padrão do código
         df_base = df_base.rename(columns={
             colunas_necessarias['CF']: 'CF',
             colunas_necessarias['RAZAO']: 'RAZAO',
@@ -584,14 +649,13 @@ def processar_planilhas():
             colunas_necessarias['GRUPO PRODUTO']: 'GRUPO PRODUTO',
             colunas_necessarias['DESCRICAO']: 'DESCRICAO',
             colunas_necessarias['P. Com']: 'P. Com',
-            colunas_necessarias['Preço Venda']: 'Preço_Venda'
+            colunas_necessarias['Preço Venda']: 'Preço_Venda',
+            colunas_necessarias['Romaneio']: 'Romaneio'
         })
         
         # Converter e formatar dados
         df_base['DATA'] = pd.to_datetime(df_base['DATA']).dt.date
         df_base['CODPRODUTO'] = pd.to_numeric(df_base['CODPRODUTO'], errors='coerce').fillna(0).astype('int64')
-        
-        # Converter preços
         df_base['P. Com'] = df_base['P. Com'].apply(
             lambda x: _converter_valor_oferta(x) if pd.notna(x) else np.nan
         )
@@ -599,15 +663,12 @@ def processar_planilhas():
             lambda x: _converter_valor_oferta(x) if pd.notna(x) else np.nan
         )
         
-        # 2. Ler apenas a aba OFF_VOG
+        # 2. Ler OFF_VOG
         print("\n--- Lendo aba OFF_VOG ---")
         df_ofertas_vog = pd.read_excel(caminho_origem, sheet_name='OFF_VOG')
-        
-        # Verificar quais colunas existem
         colunas_vog_disponiveis = df_ofertas_vog.columns.tolist()
         print(f"Colunas disponíveis em OFF_VOG: {colunas_vog_disponiveis}")
         
-        # Construir lista de colunas baseada no que existe
         colunas_ofertas_vog = []
         if 'COD' in colunas_vog_disponiveis:
             colunas_ofertas_vog.append('COD')
@@ -620,7 +681,6 @@ def processar_planilhas():
         if '1%' in colunas_vog_disponiveis:
             colunas_ofertas_vog.append('1%')
         
-        # Verificar se existe DT_REF_OFF ou Data
         if 'DT_REF_OFF' in colunas_vog_disponiveis:
             colunas_ofertas_vog.append('DT_REF_OFF')
         elif 'Data' in colunas_vog_disponiveis:
@@ -629,19 +689,14 @@ def processar_planilhas():
         else:
             raise ValueError("Não encontrada coluna de data em OFF_VOG")
         
-        # Se existirem outras colunas úteis
         for col in ['Coluna1', 'PK_OFF']:
             if col in colunas_vog_disponiveis:
                 colunas_ofertas_vog.append(col)
         
-        # Filtrar apenas as colunas necessárias
         df_ofertas_vog = df_ofertas_vog[colunas_ofertas_vog].dropna(subset=['COD', 'DT_REF_OFF'])
-        
-        # Converter tipos
         df_ofertas_vog['DT_REF_OFF'] = pd.to_datetime(df_ofertas_vog['DT_REF_OFF']).dt.date
         df_ofertas_vog['COD'] = pd.to_numeric(df_ofertas_vog['COD'], errors='coerce').fillna(0).astype('int64')
         
-        # Converter preços das ofertas
         if '3%' in colunas_ofertas_vog:
             df_ofertas_vog['3%'] = df_ofertas_vog['3%'].apply(
                 lambda x: _converter_valor_oferta(x) if pd.notna(x) else np.nan
@@ -673,12 +728,10 @@ def processar_planilhas():
         df_sem_kg['Comissao_Esperada'] = df_sem_kg.apply(
             lambda row: aplicar_regras_comissao_fixa(row, regras_comissao_fixa), axis=1)
         
-        # Separar os que tem regra aplicada
         mask_regras = df_sem_kg['Comissao_Esperada'].notna()
         df_regras = df_sem_kg[mask_regras].copy()
         df_sem_regra = df_sem_kg[~mask_regras].copy()
         
-        # Verificar se a comissão aplicada está correta
         df_regras['Status'] = df_regras.apply(
             lambda row: 'Correto' if _comparar_comissoes(row['P. Com'], row['Comissao_Esperada'], 4) else 'Incorreto', 
             axis=1)
@@ -695,7 +748,6 @@ def processar_planilhas():
         registros_sem_oferta = []
         logs_erros = []
         
-        # Otimização: Criar dicionário de ofertas por código para acesso rápido
         ofertas_por_codigo = df_ofertas_vog.groupby('COD')
         codigos_com_oferta = set(ofertas_por_codigo.groups.keys())
         
@@ -711,35 +763,24 @@ def processar_planilhas():
                 grupo = str(row['GRUPO']).strip().upper()
                 grupo_produto = str(row['GRUPO PRODUTO']).strip().upper()
                 
-                # Verificar se existe oferta para este código
                 if cod in codigos_com_oferta:
-                    # Buscar oferta específica
                     ofertas_cod = ofertas_por_codigo.get_group(cod)
                     oferta = encontrar_oferta_mais_proxima(ofertas_cod, cod, data)
                     
                     if oferta is not None:
-                        # Extrair preços da oferta
                         preco_oferta_3 = oferta.get('3%')
                         preco_oferta_2 = oferta.get('2%')
                         preco_oferta_1 = oferta.get('1%')
                         
-                        # Converter para float se necessário
                         preco_oferta_3 = _converter_valor_oferta(preco_oferta_3) if preco_oferta_3 is not None else None
                         preco_oferta_2 = _converter_valor_oferta(preco_oferta_2) if preco_oferta_2 is not None else None
                         preco_oferta_1 = _converter_valor_oferta(preco_oferta_1) if preco_oferta_1 is not None else None
                         
-                        # Classificar usando a função
                         comissao = classificar_comissao_por_oferta(
-                            preco, 
-                            preco_oferta_3, 
-                            preco_oferta_2, 
-                            preco_oferta_1,
-                            grupo,
-                            grupo_produto,
-                            is_devolucao
+                            preco, preco_oferta_3, preco_oferta_2, preco_oferta_1,
+                            grupo, grupo_produto, is_devolucao
                         )
                         
-                        # Determinar tipo de oferta
                         if oferta['DT_REF_OFF'] == data:
                             tipo_oferta = 'Exata'
                         elif oferta['DT_REF_OFF'] < data:
@@ -747,7 +788,6 @@ def processar_planilhas():
                         else:
                             tipo_oferta = 'Data Proxima Pos'
                         
-                        # Preparar dados para o resultado
                         resultado = {
                             **row.to_dict(),
                             'Preço - 5%': preco * 0.95 if grupo in ['REDE STYLLUS', 'REDE ROD E RAF'] else None,
@@ -758,7 +798,6 @@ def processar_planilhas():
                             'Tipo_Oferta': tipo_oferta
                         }
                         
-                        # Adicionar preços de oferta conforme disponibilidade
                         if preco_oferta_3 is not None and not np.isnan(preco_oferta_3):
                             resultado['Preço_Oferta_3%'] = preco_oferta_3
                         if preco_oferta_2 is not None and not np.isnan(preco_oferta_2):
@@ -781,7 +820,6 @@ def processar_planilhas():
                     'Mensagem': f'Erro ao processar: {str(e)}'
                 })
         
-        # Criar DataFrames de resultados
         df_resultados_ofertas = pd.DataFrame(resultados_ofertas) if resultados_ofertas else pd.DataFrame()
         df_sem_oferta_final = pd.DataFrame(registros_sem_oferta) if registros_sem_oferta else pd.DataFrame()
         df_logs_erros = pd.DataFrame(logs_erros) if logs_erros else pd.DataFrame()
@@ -790,7 +828,6 @@ def processar_planilhas():
         print(f"- Itens sem oferta encontrada: {len(df_sem_oferta_final)}")
         print(f"- Erros durante o processamento: {len(df_logs_erros)}")
         
-        # Separar ofertas corretas e incorretas
         if not df_resultados_ofertas.empty:
             df_ofertas_corretas = df_resultados_ofertas[df_resultados_ofertas['Status'] == 'Correto']
             df_ofertas_incorretas = df_resultados_ofertas[df_resultados_ofertas['Status'] == 'Incorreto']
@@ -799,119 +836,99 @@ def processar_planilhas():
         
         # 6. Exportar para Excel
         print(f"\nSALVANDO RESULTADOS EM: {caminho_downloads}")
-        with pd.ExcelWriter(caminho_downloads, engine='openpyxl') as writer:
-            # 1. Comissão por Kg
-            if not df_comissao_kg.empty:
-                df_comissao_kg.drop(columns=['Comissao_Kg'], errors='ignore').to_excel(
-                    writer, sheet_name='Comissão-kg', index=False)
+        
+        # Função para salvar com tratamento de erro de permissão
+        def salvar_com_alternativas(df_dict, caminho_base):
+            caminho_atual = caminho_base
+            contador = 1
+            
+            while True:
+                try:
+                    with pd.ExcelWriter(caminho_atual, engine='openpyxl') as writer:
+                        for sheet_name, df in df_dict.items():
+                            if df is not None and not df.empty:
+                                df.to_excel(writer, sheet_name=sheet_name, index=False)
+                        
+                        # Aplicar formatação de porcentagem
+                        workbook = writer.book
+                        for sheet_name in writer.sheets:
+                            worksheet = writer.sheets[sheet_name]
+                            for col_idx, col_name in enumerate(next(worksheet.iter_rows(min_row=1, max_row=1, values_only=True))):
+                                col_str = str(col_name)
+                                if any(keyword in col_str for keyword in ['Com', 'Com Atual', 'P. Com']):
+                                    for row in worksheet.iter_rows(min_row=2, min_col=col_idx+1, max_col=col_idx+1):
+                                        for cell in row:
+                                            cell.number_format = '0.00%'
+                    
+                    return caminho_atual
+                    
+                except PermissionError:
+                    nome_base, ext = os.path.splitext(caminho_base)
+                    caminho_atual = f"{nome_base}_{contador}{ext}"
+                    contador += 1
+                    print(f"⚠️  Arquivo {caminho_base} está aberto. Tentando salvar como: {caminho_atual}")
+                    
+                    if contador > 10:
+                        raise Exception("Não foi possível salvar o arquivo após várias tentativas")
+        
+        # Preparar dicionário com todos os DataFrames
+        dfs_para_salvar = {}
+        
+        # 1. Comissão por Kg
+        if not df_comissao_kg.empty:
+            df_comissao_kg = df_comissao_kg.drop(columns=['Comissao_Kg'], errors='ignore')
+            df_comissao_kg = padronizar_colunas(df_comissao_kg)
+            dfs_para_salvar['Comissão-kg'] = df_comissao_kg
 
-            # 2. Regras Corretas
-            if not df_regras_corretas.empty:
-                df_regras_corretas = df_regras_corretas.drop(
-                    columns=['Comissao_Kg', 'Status'], errors='ignore')
-                
-                colunas_ordenadas = ['CF', 'RAZAO', 'GRUPO', 'NF-E', 'DATA', 'VENDEDOR', 'CODPRODUTO',
-                                    'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'P. Com', 'Comissao_Esperada']
-                df_regras_corretas = df_regras_corretas[colunas_ordenadas].rename(
-                    columns={'Comissao_Esperada': 'O Com'})
-                
-                df_regras_corretas.to_excel(writer, sheet_name='O Regras', index=False)
+        # 2. Regras Corretas
+        if not df_regras_corretas.empty:
+            df_regras_corretas = df_regras_corretas.drop(columns=['Comissao_Kg', 'Status'], errors='ignore')
+            df_regras_corretas = padronizar_colunas(df_regras_corretas)
+            dfs_para_salvar['O Regras'] = df_regras_corretas
 
-            # 3. Regras Incorretas
-            if not df_regras_incorretas.empty:
-                df_regras_incorretas = df_regras_incorretas.drop(
-                    columns=['Comissao_Kg', 'Status'], errors='ignore')
-                
-                colunas_ordenadas = ['CF', 'RAZAO', 'GRUPO', 'NF-E', 'DATA', 'VENDEDOR', 'CODPRODUTO',
-                                    'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'P. Com', 'Comissao_Esperada']
-                df_regras_incorretas = df_regras_incorretas[colunas_ordenadas].rename(
-                    columns={'Comissao_Esperada': 'O Com'})
-                
-                df_regras_incorretas.to_excel(writer, sheet_name='X Regras', index=False)
+        # 3. Regras Incorretas
+        if not df_regras_incorretas.empty:
+            df_regras_incorretas = df_regras_incorretas.drop(columns=['Comissao_Kg', 'Status'], errors='ignore')
+            df_regras_incorretas = padronizar_colunas(df_regras_incorretas)
+            dfs_para_salvar['X Regras'] = df_regras_incorretas
 
-            # 4. Ofertas Corretas
-            if not df_resultados_ofertas.empty:
-                df_ofertas_corretas = df_resultados_ofertas[df_resultados_ofertas['Status'] == 'Correto']
-                if not df_ofertas_corretas.empty:
-                    df_ofertas_corretas = df_ofertas_corretas.drop(
-                        columns=['Comissao_Kg', 'Comissao_Esperada', 'Status', 'Tipo_Oferta'], 
-                        errors='ignore')
-                    
-                    # Ajustar colunas
-                    colunas_base = ['CF', 'RAZAO', 'GRUPO', 'NF-E', 'VENDEDOR', 'CODPRODUTO',
-                                   'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'Preço - 5%', 'DATA',
-                                   'P. Com', 'Data_Oferta', 'Comissão_Correta', 'Tipo']
-                    
-                    colunas_finais = colunas_base.copy()
-                    
-                    # Adicionar colunas de preço conforme disponíveis
-                    if 'Preço_Oferta_3%' in df_ofertas_corretas.columns:
-                        colunas_finais.insert(12, 'Preço_Oferta_3%')
-                    if 'Preço_Oferta_2%' in df_ofertas_corretas.columns:
-                        colunas_finais.insert(13 if 'Preço_Oferta_3%' in colunas_finais else 12, 'Preço_Oferta_2%')
-                    if 'Preço_Oferta_1%' in df_ofertas_corretas.columns:
-                        colunas_finais.insert(14 if 'Preço_Oferta_2%' in colunas_finais else 12, 'Preço_Oferta_1%')
-                    
-                    df_ofertas_corretas = df_ofertas_corretas[colunas_finais].rename(
-                        columns={'Comissão_Correta': 'O Com'})
-                    
-                    df_ofertas_corretas.to_excel(writer, sheet_name='O Ofertas', index=False)
-
-            # 5. Ofertas Incorretas
-            if not df_resultados_ofertas.empty:
-                df_ofertas_incorretas = df_resultados_ofertas[df_resultados_ofertas['Status'] == 'Incorreto']
-                if not df_ofertas_incorretas.empty:
-                    df_ofertas_incorretas = df_ofertas_incorretas.drop(
-                        columns=['Comissao_Kg', 'Comissao_Esperada', 'Status', 'Tipo_Oferta'], 
-                        errors='ignore')
-                    
-                    # Ajustar colunas
-                    colunas_base = ['CF', 'RAZAO', 'GRUPO', 'NF-E', 'VENDEDOR', 'CODPRODUTO',
-                                   'GRUPO PRODUTO', 'DESCRICAO', 'Preço_Venda', 'Preço - 5%', 'DATA',
-                                   'P. Com', 'Data_Oferta', 'Comissão_Correta', 'Tipo']
-                    
-                    colunas_finais = colunas_base.copy()
-                    
-                    # Adicionar colunas de preço conforme disponíveis
-                    if 'Preço_Oferta_3%' in df_ofertas_incorretas.columns:
-                        colunas_finais.insert(12, 'Preço_Oferta_3%')
-                    if 'Preço_Oferta_2%' in df_ofertas_incorretas.columns:
-                        colunas_finais.insert(13 if 'Preço_Oferta_3%' in colunas_finais else 12, 'Preço_Oferta_2%')
-                    if 'Preço_Oferta_1%' in df_ofertas_incorretas.columns:
-                        colunas_finais.insert(14 if 'Preço_Oferta_2%' in colunas_finais else 12, 'Preço_Oferta_1%')
-                    
-                    df_ofertas_incorretas = df_ofertas_incorretas[colunas_finais].rename(
-                        columns={'Comissão_Correta': 'O Com'})
-                    
-                    df_ofertas_incorretas.to_excel(writer, sheet_name='X Ofertas', index=False)
-
-            # 6. Sem Oferta
-            if not df_sem_oferta_final.empty:
-                df_sem_oferta_final = df_sem_oferta_final.drop(
-                    columns=['Comissao_Kg', 'Comissao_Esperada'], 
+        # 4. Ofertas Corretas
+        if not df_resultados_ofertas.empty:
+            df_ofertas_corretas = df_resultados_ofertas[df_resultados_ofertas['Status'] == 'Correto']
+            if not df_ofertas_corretas.empty:
+                df_ofertas_corretas = df_ofertas_corretas.drop(
+                    columns=['Comissao_Kg', 'Comissao_Esperada', 'Status', 'Tipo_Oferta'], 
                     errors='ignore')
-                
-                df_sem_oferta_final.to_excel(writer, sheet_name='Sem Oferta', index=False)
+                df_ofertas_corretas = padronizar_colunas(df_ofertas_corretas)
+                dfs_para_salvar['O Ofertas'] = df_ofertas_corretas
 
-            # 7. Logs de erros
-            if not df_logs_erros.empty:
-                df_logs_erros.to_excel(writer, sheet_name='Logs Erros', index=False)
-            
-            # Aplicar formatação de porcentagem
-            workbook = writer.book
-            
-            for sheet_name in writer.sheets:
-                worksheet = writer.sheets[sheet_name]
-                
-                for col_idx, col_name in enumerate(next(worksheet.iter_rows(min_row=1, max_row=1, values_only=True))):
-                    col_str = str(col_name)
-                    if any(keyword in col_str for keyword in ['P. Com', 'O Com', 'Comissão_Correta', 'Comissao_Esperada']):
-                        for row in worksheet.iter_rows(min_row=2, min_col=col_idx+1, max_col=col_idx+1):
-                            for cell in row:
-                                cell.number_format = '0.00%'
+        # 5. Ofertas Incorretas
+        if not df_resultados_ofertas.empty:
+            df_ofertas_incorretas = df_resultados_ofertas[df_resultados_ofertas['Status'] == 'Incorreto']
+            if not df_ofertas_incorretas.empty:
+                df_ofertas_incorretas = df_ofertas_incorretas.drop(
+                    columns=['Comissao_Kg', 'Comissao_Esperada', 'Status', 'Tipo_Oferta'], 
+                    errors='ignore')
+                df_ofertas_incorretas = padronizar_colunas(df_ofertas_incorretas)
+                dfs_para_salvar['X Ofertas'] = df_ofertas_incorretas
+
+        # 6. Sem Oferta
+        if not df_sem_oferta_final.empty:
+            df_sem_oferta_final = df_sem_oferta_final.drop(
+                columns=['Comissao_Kg', 'Comissao_Esperada'], 
+                errors='ignore')
+            df_sem_oferta_final = padronizar_colunas(df_sem_oferta_final)
+            dfs_para_salvar['Sem Oferta'] = df_sem_oferta_final
+
+        # 7. Logs de erros
+        if not df_logs_erros.empty:
+            dfs_para_salvar['Logs Erros'] = df_logs_erros
+
+        # Tentar salvar com tratamento de erro
+        arquivo_salvo = salvar_com_alternativas(dfs_para_salvar, caminho_downloads)
 
         print("\n=== PROCESSAMENTO CONCLUÍDO COM SUCESSO ===")
-        print(f"Arquivo salvo em: {caminho_downloads}")
+        print(f"Arquivo salvo em: {arquivo_salvo}")
         
     except Exception as e:
         print(f"\nERRO CRÍTICO DURANTE O PROCESSAMENTO: {str(e)}")
