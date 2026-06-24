@@ -542,13 +542,13 @@ def padronizar_colunas(df, tipo='comissao'):
     # Mapeamento de colunas originais para os novos nomes
     mapeamento = {}
     
-    # Colunas base
+    # Colunas base - mapeamento específico para garantir a ordem correta
     if 'RAZAO' in df.columns:
         mapeamento['RAZAO'] = 'RAZAO'
     if 'GRUPO' in df.columns:
-        mapeamento['GRUPO'] = 'GRUPO'
+        mapeamento['GRUPO'] = 'GRUPO'  # Primeiro GRUPO (cliente)
     if 'Romaneio' in df.columns:
-        mapeamento['Romaneio'] = 'ROMANEIO'  # Forçando maiúsculo
+        mapeamento['Romaneio'] = 'ROMANEIO'
     if 'NF-E' in df.columns:
         mapeamento['NF-E'] = 'NF-E'
     if 'DATA' in df.columns:
@@ -558,7 +558,7 @@ def padronizar_colunas(df, tipo='comissao'):
     if 'CODPRODUTO' in df.columns:
         mapeamento['CODPRODUTO'] = 'COD'
     if 'GRUPO PRODUTO' in df.columns:
-        mapeamento['GRUPO PRODUTO'] = 'GRUPO'
+        mapeamento['GRUPO PRODUTO'] = 'GRUPO PRODUTO'  # Segundo GRUPO (produto)
     if 'DESCRICAO' in df.columns:
         mapeamento['DESCRICAO'] = 'DESCRICAO'
     if 'Preço_Venda' in df.columns:
@@ -583,12 +583,12 @@ def padronizar_colunas(df, tipo='comissao'):
     # Renomear colunas
     df = df.rename(columns=mapeamento)
     
-    # Definir ordem das colunas EXATAMENTE como solicitado
-    # ROMANEIO agora está depois de GRUPO e antes de NF-E
+    # Definir ordem das colunas EXATAMENTE como na segunda imagem
+    # RAZAO | GRUPO | ROMANEIO | NF-E | DATA | VENDEDOR | COD | GRUPO PRODUTO| DESCRICAO | PV | Com | TIPO
     ordem_colunas = ['RAZAO', 'GRUPO', 'ROMANEIO', 'NF-E', 'DATA', 'VENDEDOR', 
-                     'COD', 'GRUPO', 'DESCRICAO', 'PV', 'Com', 'TIPO']
+                     'COD', 'GRUPO PRODUTO', 'DESCRICAO', 'PV', 'Com', 'TIPO']
     
-    # Adicionar outras colunas que possam existir no final
+    # Adicionar outras colunas que possam existir no final (como CF, P. Com, etc.)
     for col in df.columns:
         if col not in ordem_colunas:
             ordem_colunas.append(col)
@@ -596,7 +596,15 @@ def padronizar_colunas(df, tipo='comissao'):
     # Filtrar apenas colunas que existem no DataFrame
     ordem_colunas = [col for col in ordem_colunas if col in df.columns]
     
-    return df[ordem_colunas]
+    # Remover duplicatas da lista de colunas (mantendo apenas a primeira ocorrência)
+    seen = set()
+    ordem_colunas_sem_duplicatas = []
+    for col in ordem_colunas:
+        if col not in seen:
+            seen.add(col)
+            ordem_colunas_sem_duplicatas.append(col)
+    
+    return df[ordem_colunas_sem_duplicatas]
 
 def processar_planilhas():
     caminho_origem = r"C:\Users\DELL\Downloads\260623_MRG.xlsx"
