@@ -607,7 +607,7 @@ def padronizar_colunas(df, tipo='comissao'):
     return df[ordem_colunas_sem_duplicatas]
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\DELL\Downloads\260627_MRG.xlsx"
+    caminho_origem = r"C:\Users\DELL\Downloads\260702_MRG.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
