@@ -532,7 +532,7 @@ def classificar_comissao_por_oferta(preco, preco_oferta_3, preco_oferta_2, preco
     return comissao
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\260620_MRG.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\260630_MRG - v2.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
