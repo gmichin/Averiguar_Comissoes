@@ -115,7 +115,6 @@ def criar_regras_comissao_fixa():
                     'COMERCIO DE CARNES E ROTISSERIE DUTRA LT',
                     'COMERCIO DE CARNES E ROTISSERIE DUTRA LTDA',
                     'DISTRIBUIDORA E COMERCIO UAI SP LTDA',
-                    "GARFETO'S FORNECIMENTO DE REFEICOES LTDA", 
                     "LATICINIO SOBERANO LTDA VILA ALPINA",
                     "SAO LORENZO ALIMENTOS LTDA",
                     "QUE DELICIA MENDES COMERCIO DE ALIMENTOS",
@@ -607,7 +606,7 @@ def padronizar_colunas(df, tipo='comissao'):
     return df[ordem_colunas_sem_duplicatas]
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\DELL\Downloads\260702_MRG.xlsx"
+    caminho_origem = r"C:\Users\DELL\Downloads\260714_MRG.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
