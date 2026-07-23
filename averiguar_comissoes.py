@@ -152,8 +152,12 @@ def criar_regras_comissao_fixa():
                 },
                 0.02: {
                     'grupos_produto': ['MIUDOS BOVINOS', 'SUINOS', 'SALGADOS SUINOS A GRANEL'],
-                    'codigos': [700]
-                }
+                    'codigos': [700]    
+                },
+
+                0.03: {
+                    'grupos_produto': ['TORRESMO'],
+                }             
             },
             'REDE PLUS': {
                 0.03: {
@@ -377,6 +381,9 @@ def aplicar_regras_comissao_fixa(row, regras):
         if grupo_produto in ["MIUDOS BOVINOS", "SUINOS", "SALGADOS SUINOS A GRANEL", 
                              "SALGADOS SUINOS EMBALADOS", "CORTES DE FRANGO"]:
             return _ajustar_para_devolucao(0.02, is_devolucao)
+
+        if grupo_produto in ['TORRESMO']:
+                    return _ajustar_para_devolucao(0.03, is_devolucao)
         
         if codproduto == 700:
             return _ajustar_para_devolucao(0.02, is_devolucao)
@@ -606,7 +613,7 @@ def padronizar_colunas(df, tipo='comissao'):
     return df[ordem_colunas_sem_duplicatas]
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\DELL\Downloads\260716_MRG.xlsx"
+    caminho_origem = r"C:\Users\DELL\Downloads\260722_MRG.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
