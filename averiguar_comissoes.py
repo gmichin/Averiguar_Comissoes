@@ -618,6 +618,8 @@ def padronizar_colunas(df, tipo='comissao'):
 
 def processar_planilhas():
     caminho_origem = r"C:\Users\win11\Downloads\260731_MRG.xlsx"
+    caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
+    
     try:
         print("=== INÍCIO DO PROCESSAMENTO ===")
         
