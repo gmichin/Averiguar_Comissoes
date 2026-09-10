@@ -179,9 +179,7 @@ def criar_regras_comissao_fixa():
             'REDE ROLDAO': {
                 0.02: {
                     'grupos_produto': [
-                        'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
-                        'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGAO', 
-                        'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
+                        'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMPANADOS', 
                         'KITS FEIJOADA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
                     ]
                 },
@@ -294,9 +292,7 @@ def aplicar_regras_comissao_fixa(row, regras):
     
     if grupo == 'REDE ROLDAO':
         grupos_2_percent = [
-            'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
-            'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGAO', 
-            'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
+            'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMPANADOS', 
             'KITS FEIJOADA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
         ]
         
