@@ -107,9 +107,9 @@ def criar_regras_comissao_fixa():
         'geral': {
             0.00: { 
                 'grupos': [
-                    'REDE AKKI', 'VAREJO ANDORINHA', 'VAREJO BERGAMINI', 'REDE DA PRACA', 'REDE DOVALE',
-                    'REDE REIMBERG', 'REDE SEMAR', 'REDE TRIMAIS', 'REDE VOVO ZUZU',
-                    'REDE BENGALA', 'VAREJO OURINHOS', 'REDE RICOY', 'REDE MERCADAO'
+                    'REDE AKKI', 'VAREJO ANDORINHA', 'VAREJO BERGAMINI', 'REDE DA PRACA', 
+                    'REDE REIMBERG', 'REDE SEMAR', 'REDE TRIMAIS', 'REDE DOVALE',
+                    'VAREJO OURINHOS', 'REDE RICOY', 'REDE MERCADAO'
                 ],
                 'razoes': [
                     'COMERCIO DE CARNES E ROTISSERIE DUTRA LT',
@@ -197,9 +197,7 @@ def criar_regras_comissao_fixa():
             'REDE BENGALA': {
                 0.00: {
                     'grupos_produto': [
-                        'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
-                        'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGAO', 
-                        'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
+                        'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMPANADOS', 
                         'KITS FEIJOADA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
                     ]
                 },
@@ -215,12 +213,12 @@ def criar_regras_comissao_fixa():
             'REDE VOVO ZUZU': {
                 0.00: {
                     'codproduto': [
-                        826, 811, 824, 703, 1241, 1151, 832, 704
+                        826, 811, 824, 703, 1241, 1151, 832, 704, 1495, 1496, 1497, 1498, 1499, 1500
                     ]
                 },
                 0.01: {
                     'todos_exceto': [
-                        826, 811, 824, 703, 1241, 1151, 832, 704
+                        826, 811, 824, 703, 1241, 1151, 832, 704, 1495, 1496, 1497, 1498, 1499, 1500
                     ]
                 }
             }
@@ -309,7 +307,7 @@ def aplicar_regras_comissao_fixa(row, regras):
 
     if grupo == 'REDE VOVO ZUZU':
             produto_0_percent = [
-                826, 811, 824, 703, 1241, 1151, 832, 704
+                826, 811, 824, 703, 1241, 1151, 832, 704, 1495, 1496, 1497, 1498, 1499, 1500
             ]
             
             if codproduto in produto_0_percent:
@@ -319,9 +317,7 @@ def aplicar_regras_comissao_fixa(row, regras):
 
     if grupo == 'REDE BENGALA':
             grupos_1_percent = [
-                'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO', 'EMBUTIDOS', 
-                'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGAO', 
-                'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
+                'CONGELADOS', 'CORTES BOVINOS', 'CORTES DE FRANGO','EMPANADOS', 
                 'KITS FEIJOADA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
             ]
             
@@ -594,7 +590,7 @@ def padronizar_colunas(df, tipo='comissao'):
     return df[ordem_colunas_sem_duplicatas]
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\260811_MRG.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\260909_MRG.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
