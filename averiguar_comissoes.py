@@ -87,7 +87,8 @@ def criar_regras_comissao_kg():
                 'JMW FOODS DISTRIBUIDORA DE ALIMENTOS LTDA': [812],
                 'JMW FOODS DISTRIBUIDORA DE ALIMENTOS LTD': [812],
                 'MERCADINHO SUBLIME CUMBICA LTDA': [812],
-                'SUPER E DIST D ALIM E HORTF BRASIL LTDA': [812]
+                'SUPER E DIST D ALIM E HORTF BRASIL LTDA': [812],
+                'GRU SUPERMERCADOS BOM SUCESSO LTDA': [812]
             }
         },
         'ROSE VOLTERO': {
@@ -122,6 +123,7 @@ def criar_regras_comissao_fixa():
                     "LS SANTOS COMERCIO DE ALIMENTOS LTDA",
                     "MERCADINHO LESSA LTDA",
                     "JSV SUPERMERCADOS EIRELI- LOJA 3"
+                    'MUINO CIA LTDA'
                 ]
             },
             0.03: {
@@ -586,7 +588,7 @@ def padronizar_colunas(df, tipo='comissao'):
     return df[ordem_colunas_sem_duplicatas]
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\260909_MRG.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\260924_MRG.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
