@@ -88,7 +88,8 @@ def criar_regras_comissao_kg():
                 'JMW FOODS DISTRIBUIDORA DE ALIMENTOS LTD': [812],
                 'MERCADINHO SUBLIME CUMBICA LTDA': [812],
                 'SUPER E DIST D ALIM E HORTF BRASIL LTDA': [812],
-                'GRU SUPERMERCADOS BOM SUCESSO LTDA': [812]
+                'GRU SUPERMERCADOS BOM SUCESSO LTDA': [812],
+                'GRU SUPERMERCADOS CUMBICA LTDA': [812]
             }
         },
         'ROSE VOLTERO': {
@@ -123,7 +124,9 @@ def criar_regras_comissao_fixa():
                     "LS SANTOS COMERCIO DE ALIMENTOS LTDA",
                     "MERCADINHO LESSA LTDA",
                     "JSV SUPERMERCADOS EIRELI- LOJA 3"
-                    'MUINO CIA LTDA'
+                    'MUINO CIA LTDA',
+                    'URCA COMERCIO DE BEBIDAS E ALIMENTOS LTD',
+                    'PUBLIC COM. ATACADISTA E VAREJISTA DE AL'
                 ]
             },
             0.03: {
@@ -279,12 +282,8 @@ def aplicar_regras_comissao_fixa(row, regras):
     nfe = str(row['NF-E']).strip()
     is_devolucao = str(row['CF']).startswith('DEV')
 
-    if nfe == '131009' and codproduto == 1477:
-            return _ajustar_para_devolucao(0.03, is_devolucao)
-
-
-    if codproduto == 1807 or codproduto == 947 or codproduto == 1914 or codproduto == 2000 or codproduto == 3002 or codproduto == 2094:
-        return _ajustar_para_devolucao(0.01, is_devolucao)
+    if codproduto == 2000 or codproduto == 4084 or codproduto == 947:
+            return _ajustar_para_devolucao(0.01, is_devolucao)
     
     if vendedor == "PROPRIO":
         return _ajustar_para_devolucao(0.00, is_devolucao)
@@ -591,7 +590,7 @@ def padronizar_colunas(df, tipo='comissao'):
     return df[ordem_colunas_sem_duplicatas]
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\260929_MRG.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\260930_MRG.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
