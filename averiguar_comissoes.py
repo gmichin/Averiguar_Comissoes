@@ -111,7 +111,7 @@ def criar_regras_comissao_fixa():
                 'grupos': [
                     'REDE AKKI', 'VAREJO ANDORINHA', 'VAREJO BERGAMINI', 'REDE DA PRACA', 
                     'REDE REIMBERG', 'REDE SEMAR', 'REDE TRIMAIS', 'REDE DOVALE',
-                    'VAREJO OURINHOS', 'REDE RICOY', 'REDE MERCADAO'
+                    'VAREJO OURINHOS', 'REDE RICOY'
                 ],
                 'razoes': [
                     'COMERCIO DE CARNES E ROTISSERIE DUTRA LT',
@@ -194,6 +194,18 @@ def criar_regras_comissao_fixa():
                         'EMBUTIDOS AURORA', 'EMBUTIDOS NOBRE', 'EMBUTIDOS PERDIGAO', 
                         'EMBUTIDOS SADIA', 'EMBUTIDOS SEARA', 'EMPANADOS', 
                         'KITS FEIJOADA', 'MIUDOS BOVINOS', 'SUINOS', 'TEMPERADOS'
+                    ]
+                }
+            },
+            'REDE MERCADAO': {
+                0.00: {
+                    'grupos_produto': [
+                        'CORTES BOVINOS', 'CORTES DE FRANGO','MIUDOS BOVINOS', 'SUINOS'
+                    ]
+                },
+                0.01: {
+                    'todos_exceto': [
+                        'CORTES BOVINOS', 'CORTES DE FRANGO', 'MIUDOS BOVINOS', 'SUINOS'
                     ]
                 }
             },
@@ -304,6 +316,17 @@ def aplicar_regras_comissao_fixa(row, regras):
             return _ajustar_para_devolucao(0.02, is_devolucao)
         else:
             return _ajustar_para_devolucao(0.00, is_devolucao)
+
+        
+    if grupo == 'REDE MERCADAO':
+        grupos_0_percent = [
+            'CORTES BOVINOS', 'CORTES DE FRANGO', 'MIUDOS BOVINOS', 'SUINOS'
+        ]
+        
+        if grupo_produto in grupos_0_percent:
+            return _ajustar_para_devolucao(0.00, is_devolucao)
+        else:
+            return _ajustar_para_devolucao(0.01, is_devolucao)
 
     if grupo == 'REDE VOVO ZUZU':
             produto_0_percent = [
