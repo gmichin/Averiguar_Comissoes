@@ -293,9 +293,16 @@ def aplicar_regras_comissao_fixa(row, regras):
     grupo_produto = str(row['GRUPO PRODUTO']).strip().upper()
     nfe = str(row['NF-E']).strip()
     is_devolucao = str(row['CF']).startswith('DEV')
-
-    if codproduto == "2000" or codproduto == "4084" or codproduto == "947":
-            return _ajustar_para_devolucao(0.01, is_devolucao)
+    
+    # No início da função, normalizar o código do produto
+    try:
+        codproduto_norm = int(float(str(codproduto).strip()))
+    except (ValueError, TypeError):
+        codproduto_norm = None
+    
+    # Verificação unificada
+    if codproduto_norm in [2000, 4084, 947, 6065]:
+        return _ajustar_para_devolucao(0.01, is_devolucao)
     
     if vendedor == "PROPRIO":
         return _ajustar_para_devolucao(0.00, is_devolucao)
@@ -431,6 +438,7 @@ def aplicar_regras_comissao_fixa(row, regras):
         if 'razoes' in condicoes:
             if razao in condicoes['razoes']:
                 return _ajustar_para_devolucao(porcentagem, is_devolucao)
+
     
     return None
 
@@ -613,7 +621,7 @@ def padronizar_colunas(df, tipo='comissao'):
     return df[ordem_colunas_sem_duplicatas]
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\261007_MRG.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\261010_MRG.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
