@@ -89,7 +89,8 @@ def criar_regras_comissao_kg():
                 'MERCADINHO SUBLIME CUMBICA LTDA': [812],
                 'SUPER E DIST D ALIM E HORTF BRASIL LTDA': [812],
                 'GRU SUPERMERCADOS BOM SUCESSO LTDA': [812],
-                'GRU SUPERMERCADOS CUMBICA LTDA': [812]
+                'GRU SUPERMERCADOS CUMBICA LTDA': [812],
+                'SUPERMERCADO DOM PETROPOLIS SBC LTDA': [812],
             }
         },
         'ROSE VOLTERO': {
@@ -126,7 +127,8 @@ def criar_regras_comissao_fixa():
                     "JSV SUPERMERCADOS EIRELI- LOJA 3"
                     'MUINO CIA LTDA',
                     'URCA COMERCIO DE BEBIDAS E ALIMENTOS LTD',
-                    'PUBLIC COM. ATACADISTA E VAREJISTA DE AL'
+                    'PUBLIC COM. ATACADISTA E VAREJISTA DE AL',
+                    'PUBLIC COM. ATACADISTA E VAREJISTA - PED',
                 ]
             },
             0.03: {
@@ -301,7 +303,7 @@ def aplicar_regras_comissao_fixa(row, regras):
         codproduto_norm = None
     
     # Verificação unificada
-    if codproduto_norm in [2000, 4084, 947, 6065]:
+    if codproduto_norm in [2000, 4084, 947]:
         return _ajustar_para_devolucao(0.01, is_devolucao)
     
     if vendedor == "PROPRIO":
@@ -621,7 +623,7 @@ def padronizar_colunas(df, tipo='comissao'):
     return df[ordem_colunas_sem_duplicatas]
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\261010_MRG.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\261020_MRG.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
