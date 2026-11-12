@@ -99,7 +99,8 @@ def criar_regras_comissao_kg():
                 'HORTIFRUTI CHACARA FLORA LTDA': [812],
                 'JC MIXMERC LTDA': [812],
                 'SUPERMERCADO EMPORIO MIX LTDA': [812],
-                'SUPERMERCADO DOM PETROPOLIS LTDA': [812]
+                'SUPERMERCADO DOM PETROPOLIS LTDA': [812],
+                'SUPERMERCADO DOM PETROPOLIS SBC LTDA': [812]
             }
         }
     }
@@ -112,7 +113,7 @@ def criar_regras_comissao_fixa():
                 'grupos': [
                     'REDE AKKI', 'VAREJO ANDORINHA', 'VAREJO BERGAMINI', 'REDE DA PRACA', 
                     'REDE REIMBERG', 'REDE SEMAR', 'REDE TRIMAIS', 'REDE DOVALE',
-                    'VAREJO OURINHOS', 'REDE RICOY'
+                    'VAREJO OURINHOS', 'REDE RICOY', 'REDE ULTIMA PARADA'
                 ],
                 'razoes': [
                     'COMERCIO DE CARNES E ROTISSERIE DUTRA LT',
@@ -367,7 +368,7 @@ def aplicar_regras_comissao_fixa(row, regras):
     if 'REDE CENCOSUD' in grupo:
         if 'SALAME UAI' in grupo_produto:
             return _ajustar_para_devolucao(0.01, is_devolucao)
-        return _ajustar_para_devolucao(0.03, is_devolucao)
+        return _ajustar_para_devolucao(0.05, is_devolucao)
     
     if grupo == 'REDE ROSSI':
         if codproduto in [937, 1698, 1701, 1587, 1700, 1586, 1699, 943, 1735, 1624, 1134]:
@@ -623,7 +624,7 @@ def padronizar_colunas(df, tipo='comissao'):
     return df[ordem_colunas_sem_duplicatas]
 
 def processar_planilhas():
-    caminho_origem = r"C:\Users\win11\Downloads\261020_MRG.xlsx"
+    caminho_origem = r"C:\Users\win11\Downloads\261111_MRG.xlsx"
     caminho_downloads = os.path.join(os.path.expanduser('~'), 'Downloads', 'Averiguar_Comissoes (MARGEM).xlsx')
     
     try:
